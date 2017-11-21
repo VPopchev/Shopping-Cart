@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+{% block main %}
+    <div class="container body-content span=8 offset=2">
+        <div class="well">
+            <form class="form-horizontal" action="{{ path('create_product') }}" method="post">
+                <fieldset>
+                    <legend>Create Product</legend>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="product_name">Name</label>
+                        <div class="col-sm-4 ">
+                            <input type="text" class="form-control" id="product_name" placeholder="Name"
+                                   name="product[name]">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="product_description">Name</label>
+                        <div class="col-sm-4 ">
+                            <textarea class="form-control" id="product_description" placeholder="Name"
+                                      name="product[description]"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4" for="product_category">Category</label>
+                        <div class="col-sm-4">
+                            <select name="product[categoryId]" inlist="product_category">
+                                <option value=1>Home</option>
+                                <option value=2>Office</option>
+                                <option value=3>Garden</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4" for="product_price">Price</label>
+                        <div class="col-sm-4">
+                            <input type="number" step="0.01" class="form-control" name="product[price]"
+                                   id="product_price"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-4 col-sm-offset-4">
+                            <a class="btn btn-default" href="">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </div>
+                    </div>
+
+                    {{  form_row(form._token) }}
+                </fieldset>
+            </form>
+        </div>
+    </div>
+{% endblock %}

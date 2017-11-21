@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <div class="form-group">
+        {{ user.email }} <br/>
+        Username: {{ user.username }}
+        <br>
+        First Name: {{ user.firstName }}
+        <br>
+        Last Name: {{ user.lastName }}
+        <br>
+        Cash: {{ user.cash }}лв.
+    </div>
+    <h1>User Products</h1>
+    {% for product in user.products  %}
+        <div class="form-group">
+            Product Name: {{ product.name }}<br/>
+            Category: {{ product.category.name }}<br/>
+            Product Description: {{ product.description }}<br/>
+            Price: {{ product.price }}лв
+        </div>
+    {% endfor %}
+{% endblock %}
