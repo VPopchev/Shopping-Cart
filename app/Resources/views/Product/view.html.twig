@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+{% block main %}
+    {{ product.name }}<br/>
+    {{ product.description }}<br/>
+    {{ product.price|number_format(2) }}лв.<br/>
+    {% if (product.owner.username == app.user.getUsername()) %}
+        <a href="{{ path('edit_product', {'id': product.id}) }}">Edit</a>
+    {% endif %}
+{% endblock %}

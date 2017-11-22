@@ -19,68 +19,76 @@
 <body id="{% block body_id %}{% endblock %}">
 
 {% block header %}
-<header>
-    <div class="navbar navbar-default navbar-static-top" role="navigation">
-        <div class="container">
-            <div class="navbar-header">
-                <a href="{{ path('homepage') }}" class="navbar-brand">Shopping Cart</a>
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    {% if app.user %}
-                    <li>
-                        <a href="{{ path('user_profile') }}">
-                            My Profile
-                        </a>
-                    </li>
-                        <li>
-                            <a href="{{ path('create_product') }}">
-                                Add Product
-                            </a>
-                        </li>
-                    <li>
-                        <a href="{{ path('security_logout') }}">
-                            Logout
-                        </a>
-                    </li>
-                    {% else %}
-                        <li>
-                            <a href="{{ path('register_action') }}">
-                                REGISTER
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ path('security_login') }}">
-                                LOGIN
-                            </a>
-                        </li>
-                    {% endif %}
-                </ul>
+    <header>
+        <div class="navbar navbar-default navbar-static-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <a href="{{ path('homepage') }}" class="navbar-brand">Shopping Cart</a>
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if app.user %}
+                            <li>
+                                <a href="{{ path('category_list',{'categoryId': 1}) }}">
+                                    Home Products
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('category_list',{'categoryId': 2}) }}">
+                                    Office Products
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('category_list',{'categoryId': 3}) }}">
+                                    Garden Products
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('user_profile') }}">
+                                    My Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('create_product') }}">
+                                    Add Product
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('security_logout') }}">
+                                    Logout
+                                </a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="{{ path('register_action') }}">
+                                    REGISTER
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('security_login') }}">
+                                    LOGIN
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
 {% endblock %}
-
-<div class="container body-container">
     {% block body %}
-        <div class="row">
-            <div id="main" class="col-sm-9">
-                {% block main %}{% endblock %}
-            </div>
-        </div>
-    {% endblock %}
-</div>
 
+                {% block main %}{% endblock %}
+    {% endblock %}
 {% block footer %}
     <footer>
         <div class="container modal-footer">
-            <p>&copy; 2016 - Software University Foundation</p>
+            <p>&copy; 2017 - Software University Foundation</p>
         </div>
     </footer>
 {% endblock %}

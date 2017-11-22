@@ -6,11 +6,10 @@
     {% else %}
         <h1>Hello Guest!</h1>
     {% endif %}
-    <div class="container body-content">
     <div class="row">
         {% for product in products %}
-            <div class="col-sm-6">
-                <article style="border: solid;padding: 5px;border-radius: 3px">
+            <div class="col-sm-4">
+                <article style="border: dashed;padding: 5px;border-radius: 3px;margin: 5px">
                     <header>
                         <h2 style="text-align: center">{{ product.name }}</h2>
                         <h4>Category: {{ product.category.name }}</h4>
@@ -21,7 +20,7 @@
                     </p>
 
                     <footer style="text-align: center">
-                        Price: {{ product.price }}лв.
+                        <b>Price: {{ product.price|number_format(2) }}лв.</b>
                     </footer>
                     <small class="author">
                         Owner: {{ product.owner.username }}
@@ -30,7 +29,7 @@
                     <footer>
                         <div class="pull-right">
                             <a class="btn btn-default btn-xs"
-                               href="#">View product &raquo;</a>
+                               href="{{ path('view_product', {'id': product.id}) }}">View product &raquo;</a>
                         </div>
                     </footer>
                 </article>
@@ -38,6 +37,6 @@
 
             </div>
         {% endfor %}
-    </div>
+
 {% endblock %}
 

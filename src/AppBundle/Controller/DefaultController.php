@@ -20,6 +20,7 @@ class DefaultController extends Controller
             ->getDoctrine()
             ->getRepository(Product::class)
             ->findAll();
+
         foreach ($products as $product){
             $category = $this->getDoctrine()
                 ->getRepository(ProductCategory::class)
