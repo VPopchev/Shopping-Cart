@@ -30,23 +30,24 @@
                         <span class="icon-bar"></span>
                     </button>
                 </div>
+
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
                         {% if app.user %}
                             <li>
-                                <a href="{{ path('category_list',{'categoryId': 1}) }}">
-                                    Home Products
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ path('category_list',{'categoryId': 2}) }}">
-                                    Office Products
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ path('category_list',{'categoryId': 3}) }}">
-                                    Garden Products
-                                </a>
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-primary dropdown-toggle"
+                                            data-toggle="dropdown">
+                                        <span class="caret"></span>Categories
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        {% for category in categories %}
+                                            <li><a href="{{ path('category_list',{'categoryId':category.id}) }}">{{
+                                                    category.name
+                                                    }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
                             </li>
                             <li>
                                 <a href="{{ path('user_profile') }}">
@@ -81,10 +82,10 @@
         </div>
     </header>
 {% endblock %}
-    {% block body %}
+{% block body %}
 
-                {% block main %}{% endblock %}
-    {% endblock %}
+    {% block main %}{% endblock %}
+{% endblock %}
 {% block footer %}
     <footer>
         <div class="container modal-footer">

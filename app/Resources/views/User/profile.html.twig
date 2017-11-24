@@ -11,6 +11,7 @@
         <br>
         Cash: {{ user.cash }}лв.
     </div>
+
     <h1>User Products</h1>
     <div class="container body-content">
         <div class="row">
@@ -30,6 +31,7 @@
                         <b>Price: {{ product.price|number_format(2) }}лв.</b>
                     </footer>
                     <small class="author">
+                        Quantity: {{ product.quantity }}<br/>
                         Owner: {{ product.owner.username }}
                     </small>
 

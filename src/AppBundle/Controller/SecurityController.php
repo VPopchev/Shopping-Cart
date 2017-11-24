@@ -9,14 +9,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class SecurityController extends Controller
+class SecurityController extends BaseController
 {
     /**
      * @Route("/login", name="security_login")
      */
     public function loginAction()
     {
-        return $this->render('user/login.html.twig');
+        return $this->render('user/login.html.twig',[
+            'categories' => $this->categories
+        ]);
     }
 
     /**

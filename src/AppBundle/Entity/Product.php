@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -30,7 +31,6 @@ class Product
 
     /**
      * @var string
-     *
      * @ORM\Column(name="name", type="string", length=255)
      */
     private $name;
@@ -48,6 +48,12 @@ class Product
      * @ORM\Column(name="price", type="float")
      */
     private $price;
+
+    /**
+     * @var int
+     * @ORM\Column(name="quantity",type="integer")
+     */
+    private $quantity;
 
     /**
      * @var int
@@ -71,6 +77,8 @@ class Product
      * @ORM\JoinColumn(name="userId",referencedColumnName="id")
      */
     private $owner;
+
+
 
     /**
      * @param User $user
@@ -98,6 +106,24 @@ class Product
     public function getCategory(){
         return $this->category;
     }
+
+
+    public function getQuantity()
+    {
+        return $this->quantity;
+    }
+
+    /**
+     * @param int $quantity
+     * @return Product
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+        return $this;
+    }
+
+
 
 
     /**

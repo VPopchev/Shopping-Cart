@@ -3,7 +3,9 @@
     {{ product.name }}<br/>
     {{ product.description }}<br/>
     {{ product.price|number_format(2) }}лв.<br/>
-    {% if (product.owner.username == app.user.getUsername()) %}
+    {% if app.getUser() and (app.getUser().isOwner(product) or app.getUser.isAdmin()) %}
         <a href="{{ path('edit_product', {'id': product.id}) }}">Edit</a>
+        <a href="{{ path('delete_product', {'id': product.id}) }}">Delete</a>
     {% endif %}
+    <a href="#">Add to cart!</a>
 {% endblock %}

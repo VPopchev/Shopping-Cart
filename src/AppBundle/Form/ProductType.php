@@ -18,6 +18,7 @@ class ProductType extends AbstractType
         $builder
             ->add('name',TextType::class)
             ->add('description',TextType::class)
+            ->add('quantity',NumberType::class)
             ->add('categoryId',ChoiceType::class,[
                 'choices' => [
                     'Home' => 1,
