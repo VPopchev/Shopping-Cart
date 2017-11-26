@@ -1,11 +1,53 @@
 {% extends 'base.html.twig' %}
 {% block main %}
-    {{ product.name }}<br/>
-    {{ product.description }}<br/>
-    {{ product.price|number_format(2) }}лв.<br/>
-    {% if app.getUser() and (app.getUser().isOwner(product) or app.getUser.isAdmin()) %}
-        <a href="{{ path('edit_product', {'id': product.id}) }}">Edit</a>
-        <a href="{{ path('delete_product', {'id': product.id}) }}">Delete</a>
-    {% endif %}
-    <a href="#">Add to cart!</a>
+    {% for msg in app.session.flashBag.get('error') %}
+        <div class="alert alert-danger">
+            <h3>{{ msg }}</h3>
+        </div>
+    {% endfor %}
+    {% for msg in app.session.flashBag.get('success') %}
+        <div class="alert alert-success">
+            <h3>{{ msg }}</h3>
+        </div>
+    {% endfor %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <article>
+                    <header>
+                        <h2>{{ product.name }}</h2>
+                    </header>
+
+                    <p>
+                        {{ product.description }}
+                    </p>
+
+                    <p>
+                        Цена: {{ product.price|number_format(2) }}лв.
+                    </p>
+
+                    <small class="author">
+                        Quantity: {{ product.quantity }}<br/>
+                        Owner: {{ product.owner.userName }}
+                    </small>
+
+                    <footer>
+                        {% if (product.owner.id != app.user.id) %}
+                            <div class="pull-right">
+                                <a href="{{ path('add_to_cart',{'id': product.id}) }}">Add to Cart</a>
+                            </div>
+                        {% endif %}
+                        {% if (product.owner.id == app.user.id or app.user.isAdmin()) %}
+                            <div class="pull-left">
+                                <a href="{{ path('edit_product',{'id': product.id}) }}">Edit Product</a>
+                            </div><br/>
+                            <div class="pull-left">
+                                <a href="{{ path('delete_product',{'id': product.id}) }}">Delete Product</a>
+                            </div>
+                        {% endif %}
+                    </footer>
+                </article>
+            </div>
+        </div>
+    </div>
 {% endblock %}

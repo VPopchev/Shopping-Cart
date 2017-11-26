@@ -42,7 +42,8 @@
                                     </button>
                                     <ul class="dropdown-menu">
                                         {% for category in categories %}
-                                            <li><a href="{{ path('category_list',{'categoryId':category.id}) }}">{{
+                                            <li><a href="{{ path('category_list',{'id':category.id})
+                                                }}">{{
                                                     category.name
                                                     }}</a></li>
                                         {% endfor %}

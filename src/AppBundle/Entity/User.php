@@ -90,6 +90,32 @@ class User implements UserInterface
      */
     private $roles;
 
+
+    /**
+     * @var Cart
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Cart",mappedBy="user")
+     */
+    private $cart;
+
+    /**
+     * @return mixed
+     */
+    public function getCart()
+    {
+        return $this->cart;
+    }
+
+    /**
+     * @param mixed $cart
+     */
+    public function setCart($cart)
+    {
+        $this->cart = $cart;
+    }
+
+
+
+
     /**
      * User constructor.
      * @param ArrayCollection $products

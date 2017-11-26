@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Cart;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\ProductCategory;
 use AppBundle\Entity\User;
@@ -19,8 +20,7 @@ class DefaultController extends BaseController
         $products = $this
             ->getDoctrine()
             ->getRepository(Product::class)
-            ->findAll();
-
+            ->findBy(['status' => 'Active']);
         foreach ($products as $product){
             $category = $this->getDoctrine()
                 ->getRepository(ProductCategory::class)

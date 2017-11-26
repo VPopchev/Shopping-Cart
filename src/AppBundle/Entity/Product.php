@@ -3,7 +3,9 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Schema\Column;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * Product
@@ -77,6 +79,28 @@ class Product
      * @ORM\JoinColumn(name="userId",referencedColumnName="id")
      */
     private $owner;
+
+    /**
+     * @ORM\Column(name="status",type="string")
+     */
+    private $status;
+
+    /**
+     * @return mixed
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param mixed $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
 
 
 

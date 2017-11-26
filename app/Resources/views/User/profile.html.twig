@@ -1,6 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
+    {% for msg in app.session.flashBag.get('error') %}
+        <div class="alert alert-danger">
+            {{ msg }}
+        </div>
+    {% endfor %}
+    {% for msg in app.session.flashBag.get('success') %}
+        <div class="alert alert-success">
+            {{ msg }}
+        </div>
+    {% endfor %}
     <div class="form-group">
         {{ user.email }} <br/>
         Username: {{ user.username }}
@@ -11,6 +21,35 @@
         <br>
         Cash: {{ user.cash }}лв.
     </div>
+    <table class="table" border="5">
+        <thead class="media-heading">
+        <tr>
+            <th>Product</th>
+            <th>Description</th>
+            <th>Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for product in user.cart.products %}
+            <tr class="table-hover">
+                <td><a href="{{ path('remove_from_cart',{'id':product.id}) }}">X</a>{{ product.name }}</td>
+                <td>{{ product.description }}</td>
+                <td>{{ product.price|number_format(2) }}</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td></td>
+            <td></td>
+            <td>Total: {{ user.cart.getTotal()|number_format(2) }}</td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="pull-right">
+        <a href="{{ path('cash_out_cart') }}">Cash Out Cart</a>
+    </div>
+    <div class="pull-left">
+        <a href="{{ path('clear_cart') }}">Clear Cart</a>
+    </div> <br/>
 
     <h1>User Products</h1>
     <div class="container body-content">

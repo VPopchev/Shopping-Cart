@@ -19,6 +19,12 @@ class ProductType extends AbstractType
             ->add('name',TextType::class)
             ->add('description',TextType::class)
             ->add('quantity',NumberType::class)
+            ->add('status',ChoiceType::class,[
+                'choices' => [
+                    'Active' => 'Active',
+                    'Inactive' => 'Inactive'
+                ]
+            ])
             ->add('categoryId',ChoiceType::class,[
                 'choices' => [
                     'Home' => 1,

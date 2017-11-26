@@ -35,6 +35,21 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-sm-4" for="product_status">Quantity</label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="product[status]" id="product_status">
+                                {% if product.status == 'Active' %}
+                                    <option selected value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                    {% else %}
+                                        <option value="Active">Active</option>
+                                        <option selected value="Inactive">Inactive</option>
+                                {% endif %}
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="col-sm-4" for="product_quantity">Quantity</label>
                         <div class="col-sm-4">
                             <input type="number" value="{{ product.quantity }}" class="form-control"

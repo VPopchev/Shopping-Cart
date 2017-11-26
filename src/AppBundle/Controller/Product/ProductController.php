@@ -7,6 +7,7 @@ use AppBundle\Entity\Product;
 use AppBundle\Entity\ProductCategory;
 use AppBundle\Entity\User;
 use AppBundle\Form\ProductType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,17 +45,10 @@ class ProductController extends BaseController
     }
 
     /**
-     * @Route("product/listByCategory/{categoryId}",name="category_list")
+     * @Route("product/listByCategory/{id}",name="category_list")
      */
-    public function listAction(int $categoryId)
+    public function listAction(ProductCategory $category)
     {
-        $category = $this->getDoctrine()
-            ->getRepository(ProductCategory::class)
-            ->find($categoryId);
-//
-//        $products = $this->getDoctrine()
-//            ->getRepository(Product::class)
-//            ->findBy(['categoryId' => $categoryId]);
         return $this->render('product/listByCategory.html.twig', [
             'category' => $category,
             'categories' => $this->categories
@@ -64,16 +58,19 @@ class ProductController extends BaseController
     /**
      * @Route("product/view/{id}",name="view_product")
      */
-    public function viewAction(int $id)
+    public function viewAction(Product $product,Request $request)
     {
-        $product = $this->getDoctrine()
-            ->getRepository(Product::class)
-            ->find($id);
+        $form = $this->createForm(ProductType::class,$product);
+        $form->handleRequest($request);
         return $this->render('product/view.html.twig', [
             'product' => $product,
-            'categories' => $this->categories
+            'categories' => $this->categories,
+            'form' => $form->createView()
         ]);
     }
+
+
+
 
     /**
      * @Route("product/edit/{id}",name="edit_product")
@@ -115,16 +112,12 @@ class ProductController extends BaseController
      * @Route("product/delete/{id}",name="delete_product")
      * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      */
-    public function deleteAction(int $id, Request $request){
-        $product = $this->getDoctrine()
-            ->getRepository(Product::class)
-            ->find($id);
+    public function deleteAction(Product $product, Request $request){
         if($product === null){
             return $this->redirectToRoute("homepage");
         }
 
         $currentUser = $this->getUser();
-
         if(!$currentUser->isOwner($product) && !$currentUser->isAdmin()){
             return $this->redirectToRoute("homepage");
         }
@@ -143,5 +136,4 @@ class ProductController extends BaseController
             'categories' => $this->categories
         ]);
     }
-
 }

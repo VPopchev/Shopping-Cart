@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\User;
 
 use AppBundle\Controller\BaseController;
+use AppBundle\Entity\Cart;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
@@ -37,27 +38,32 @@ class UserController extends BaseController
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $user->setRegistrationDate(new \DateTime());
-        $user->setCash(1500.00);
+        $user->setCash(1500);
         $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $password = $this->get('security.password_encoder')
-                ->encodePassword($user, $user->getPassword());
+        if ($form->isSubmitted() && $form->isValid()) {
+            $password = $this->get('security.password_encoder')->encodePassword($user, $user->getPassword());
             $user->setPassword($password);
 
-            $roleRepository = $this->getDoctrine()
-                                    ->getRepository(Role::class);
+            $roleRepository = $this->getDoctrine()->getRepository(Role::class);
             $userRole = $roleRepository->findOneBy(['name' => 'ROLE_USER']);
             $user->addRole($userRole);
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
+            $this->createCart($user);
             return $this->redirectToRoute('security_login');
         }
         return $this->render('user/register.html.twig', [
-            'form' => $form->createView(),
-            'categories' => $this->categories
-        ]);
+            'form' => $form->createView(), 'categories' => $this->categories]);
+    }
+
+    private function createCart($user)
+    {
+        $cart = new Cart();
+        $cart->setUser($user);
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($cart);
+        $em->flush();
     }
 }
