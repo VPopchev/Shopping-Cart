@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\Entity\Product;
 use AppBundle\Entity\ProductCategory;
 use AppBundle\Repository\ProductRepository;
 use Doctrine\ORM\EntityManager;
@@ -20,8 +21,7 @@ class BaseController extends Controller
 
     public function __construct(EntityManager $em)
     {
-        $this->categories =
-            $em->getRepository(ProductCategory::class)
-                ->findAll();
+        $this->categories = $em->getRepository(ProductCategory::class)
+            ->findAll();
     }
 }

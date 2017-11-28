@@ -17,6 +17,9 @@ class DefaultController extends BaseController
      */
     public function indexAction(Request $request)
     {
+
+
+
         $products = $this
             ->getDoctrine()
             ->getRepository(Product::class)

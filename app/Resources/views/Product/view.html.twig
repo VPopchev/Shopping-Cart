@@ -32,12 +32,12 @@
                     </small>
 
                     <footer>
-                        {% if (product.owner.id != app.user.id) %}
+                        {% if (app.user != null and product.owner.id != app.user.id) %}
                             <div class="pull-right">
                                 <a href="{{ path('add_to_cart',{'id': product.id}) }}">Add to Cart</a>
                             </div>
                         {% endif %}
-                        {% if (product.owner.id == app.user.id or app.user.isAdmin()) %}
+                        {% if (app.user != null and (app.user.isAdmin() or app.user.isEditor())) %}
                             <div class="pull-left">
                                 <a href="{{ path('edit_product',{'id': product.id}) }}">Edit Product</a>
                             </div><br/>

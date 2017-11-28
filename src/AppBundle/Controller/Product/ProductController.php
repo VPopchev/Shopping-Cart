@@ -76,11 +76,9 @@ class ProductController extends BaseController
      * @Route("product/edit/{id}",name="edit_product")
      * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      */
-    public function editAction(int $id, Request $request)
+    public function editAction(Product $product, Request $request)
     {
-        $product = $this->getDoctrine()
-            ->getRepository(Product::class)
-            ->find($id);
+
 
         if ($product === null){
             return $this->redirectToRoute("homepage");
@@ -94,6 +92,7 @@ class ProductController extends BaseController
 
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->merge($product);

@@ -47,6 +47,9 @@
                                                     category.name
                                                     }}</a></li>
                                         {% endfor %}
+                                        {% if app.user.isAdmin() or app.user.isEditor() %}
+                                            <li><a href="{{ path('manage_categories') }}">Manage Categories</a></li>
+                                        {% endif %}
                                     </ul>
                                 </div>
                             </li>

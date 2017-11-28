@@ -371,6 +371,18 @@ class User implements UserInterface
         return in_array('ROLE_ADMIN', $this->getRoles());
     }
 
+    public function isEditor(){
+        return in_array('ROLE_EDITOR', $this->getRoles());
+    }
+
+    public function removeRoles(){
+        foreach ($this->roles as $role){
+            if ($role->getName() !== 'ROLE_USER'){
+                $this->roles->removeElement($role);
+            }
+        }
+    }
+
     /**
      * Returns the salt that was originally used to encode the password.
      *

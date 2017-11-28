@@ -1966,6 +1966,8 @@ pre code {
     float: left;
   }
   .col-md-12 {
+    border: ridge;
+    border-color: #4b98fc;
     width: 100%;
   }
   .col-md-11 {
@@ -1984,6 +1986,7 @@ pre code {
     width: 58.33333333%;
   }
   .col-md-6 {
+
     width: 50%;
   }
   .col-md-5 {

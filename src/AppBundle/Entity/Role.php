@@ -108,5 +108,15 @@ class Role implements RoleHierarchyInterface
     {
         // TODO: Implement getReachableRoles() method.
     }
+
+    public function getUsers(){
+        return $this->users;
+    }
+
+    public function addUser(User $user){
+        $this->users[] = $user;
+        return $this;
+    }
+
 }
 

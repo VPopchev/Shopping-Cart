@@ -25,13 +25,7 @@ class ProductType extends AbstractType
                     'Inactive' => 'Inactive'
                 ]
             ])
-            ->add('categoryId',ChoiceType::class,[
-                'choices' => [
-                    'Home' => 1,
-                    'Office' => 2,
-                    'Garden' => 3
-                ]
-            ])
+            ->add('categoryId')
             ->add('price',NumberType::class);
 
     }

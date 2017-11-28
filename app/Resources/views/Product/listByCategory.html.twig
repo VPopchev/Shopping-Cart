@@ -3,7 +3,7 @@
     <h1>{{ category.name }} Products</h1>
     <div class="container body-content">
         <div class="form-group">
-            {% for product in category.products %}
+            {% for product in category.activeProducts %}
             <div class="col-sm-4">
                 <article style="border: dashed;padding: 5px;border-radius: 3px">
                     <header>

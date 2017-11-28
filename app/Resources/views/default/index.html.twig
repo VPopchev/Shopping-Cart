@@ -24,7 +24,8 @@
                     </footer>
                     <small class="author">
                         Quantity: {{ product.quantity }}<br/>
-                        Owner: {{ product.owner.username }}
+                        Owner: <a href="{{ path('view_user_profile',{'id':product.owner.id}) }}">{{ product.owner
+                            .username }}</a>
                     </small>
 
                     <footer>

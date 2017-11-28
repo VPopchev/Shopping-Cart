@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+{% block main %}
+    <div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <article>
+                <header>
+                    <h2>{{ user.username }}'s Profile</h2>
+                </header>
+
+                <p>
+                    {{ user.firstName }}
+                    {{ user.lastName }}
+                </p>
+
+                <p>
+                    Email: {{ user.email }}
+                </p>
+
+
+                <small class="author">
+                    Registration Date:{{ user.registrationDate|date }}
+                </small>
+
+                <footer>
+
+                </footer>
+            </article>
+            {% if (app.user != null and app.user.isAdmin()) %}
+                <a href="{{ path('edit_roles', {'id': user.id}) }}">Manage User</a>
+            {% endif %}
+        </div>
+        <div class="row"><br/>
+            <h2>Products</h2>
+            {% for product in user.products %}
+                <div class="col-md-12">
+                    <article>
+                        <header>
+                            {{ product.name }}
+                        </header>
+                        <p>{{ product.description }}</p>
+                    </article>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

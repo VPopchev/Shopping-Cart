@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+{% block main %}
+    <table class="table" border="1">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Products</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        {% for category in  categories %}
+            <tr>
+                <td>{{ category.id }}</td>
+                <td>{{ category.name }}</td>
+                <td>{{ category.products|length }}</td>
+                <td><a href="{{ path('remove_category',{'id': category.id}) }}">Delete category</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+    <div class="container body-content span=8 offset=2">
+    <div class="well">
+    <form class="form-horizontal" action="{{ path('manage_categories') }}" method="post">
+        <fieldset>
+            <legend>Create Category</legend>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="category_name">Name</label>
+                <div class="col-sm-4 ">
+                    <input type="text" class="form-control" id="category_name" placeholder="Category Name"
+                           name="product_category[name]">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-4 col-sm-offset-4">
+                    <a class="btn btn-default" href="">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </div>
+            {{ form_row(form._token) }}
+        </fieldset>
+    </form>
+    </div>
+    </div>
+{% endblock %}

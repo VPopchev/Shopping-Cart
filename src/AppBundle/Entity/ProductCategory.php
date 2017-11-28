@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -43,12 +44,17 @@ class ProductCategory
         $this->products = new ArrayCollection();
     }
 
-
     /**
      * @return Collection
      */
     public function getProducts(){
         return $this->products;
+    }
+
+    public function activeProducts(){
+        $criteria = Criteria::create()->where(Criteria::expr()
+            ->eq("status",'Active'));
+        return $this->products->matching($criteria);
     }
 
 

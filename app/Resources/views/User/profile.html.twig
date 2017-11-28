@@ -59,7 +59,7 @@
                 <article style="border: dashed;padding: 5px;border-radius: 3px">
                     <header>
                         <h2 style="text-align: center">{{ product.name }}</h2>
-                        <h4>Category: {{ product.category.name }}</h4>
+                        <h4>Category: {{ product.category == null ? 'n/a': product.category.name }}</h4>
                     </header>
 
                     <p style="border: solid;border-radius: 3px">

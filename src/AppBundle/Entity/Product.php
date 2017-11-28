@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Product
@@ -27,7 +28,7 @@ class Product
     /**
      * @var int
      *
-     * @ORM\Column(name="categoryId", type="integer")
+     * @ORM\Column(name="categoryId", type="integer",nullable=true)
      */
     private $categoryId;
 
@@ -68,7 +69,7 @@ class Product
     /**
      * @var ProductCategory
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductCategory"), inversedBy="products")
-     * @ORM\JoinColumn(name="categoryId",referencedColumnName="id")
+     * @ORM\JoinColumn(name="categoryId",referencedColumnName="id",onDelete="SET NULL")
      */
     private $category;
 
@@ -119,10 +120,10 @@ class Product
 
 
     /**
-     * @param ProductCategory $category
+     * @param ProductCategory|null $category
      * @return Product
      */
-    public function setCategory(ProductCategory $category){
+    public function setCategory(?ProductCategory $category){
             $this->category = $category;
             return $this;
     }

@@ -8,6 +8,7 @@ use AppBundle\Entity\Product;
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,11 +44,9 @@ class UserController extends BaseController
         if ($form->isSubmitted() && $form->isValid()) {
             $password = $this->get('security.password_encoder')->encodePassword($user, $user->getPassword());
             $user->setPassword($password);
-
             $roleRepository = $this->getDoctrine()->getRepository(Role::class);
             $userRole = $roleRepository->findOneBy(['name' => 'ROLE_USER']);
             $user->addRole($userRole);
-
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
@@ -57,6 +56,17 @@ class UserController extends BaseController
         return $this->render('user/register.html.twig', [
             'form' => $form->createView(), 'categories' => $this->categories]);
     }
+
+    /**
+     * @Route("user/userProfileView/{id}",name="view_user_profile")
+     */
+    public function viewUserProfile(User $user){
+        return $this->render('user/userProfileView.html.twig',
+            ['user' => $user,'categories' => $this->categories]);
+    }
+
+
+
 
     private function createCart($user)
     {
