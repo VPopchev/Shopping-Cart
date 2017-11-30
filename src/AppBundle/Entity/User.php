@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * User
@@ -26,35 +27,49 @@ class User implements UserInterface
 
     /**
      * @var string
-     *
+     * @Assert\Length(
+     *     min="3",
+     *     minMessage="Your first name should be at least {{ limit }} characters long!"
+     * )
      * @ORM\Column(name="username", type="string", length=100, unique=true)
      */
     private $username;
 
     /**
      * @var string
-     *
+     * @Assert\Length(
+     *     min = 6,
+     *     max = 50,
+     *     minMessage="Your password must be at least {{ limit }} characters !",
+     *     maxMessage="Your password cannot be longer than {{ limit }} characters !"
+     * )
      * @ORM\Column(name="password", type="string", length=255)
      */
     private $password;
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank()
      * @ORM\Column(name="email", type="string", length=100, unique=true)
      */
     private $email;
 
     /**
      * @var string
-     *
+     * @Assert\Length(
+     *     min="3",
+     *     minMessage="Your first name should be at least {{ limit }} characters long!"
+     * )
      * @ORM\Column(name="firstName", type="string", length=255)
      */
     private $firstName;
 
     /**
      * @var string
-     *
+     * @Assert\Length(
+     *     min="3",
+     *     minMessage="Your last name should be at least {{ limit }} characters long!"
+     * )
      * @ORM\Column(name="lastName", type="string", length=255)
      */
     private $lastName;

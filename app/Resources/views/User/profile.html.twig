@@ -3,12 +3,12 @@
 {% block main %}
     {% for msg in app.session.flashBag.get('error') %}
         <div class="alert alert-danger">
-            {{ msg }}
+            <h3>{{ msg }}</h3>
         </div>
     {% endfor %}
     {% for msg in app.session.flashBag.get('success') %}
         <div class="alert alert-success">
-            {{ msg }}
+            <h3>{{ msg }}</h3>
         </div>
     {% endfor %}
     <div class="form-group">
@@ -62,6 +62,7 @@
                         <h4>Category: {{ product.category == null ? 'n/a': product.category.name }}</h4>
                     </header>
 
+
                     <p style="border: solid;border-radius: 3px">
                         Description: {{ product.description }}
                     </p>
@@ -70,6 +71,7 @@
                         <b>Price: {{ product.price|number_format(2) }}лв.</b>
                     </footer>
                     <small class="author">
+                        Status: {{ product.status }}<br/>
                         Quantity: {{ product.quantity }}<br/>
                         Owner: {{ product.owner.username }}
                     </small>

@@ -3,7 +3,9 @@
 {% block body_id 'login' %}
 
 {% block main %}
-
+    {% if error %}
+        <div class="alert alert-danger"><h3>{{ error.messageKey|trans(error.messageData, 'security') }}</h3></div>
+    {% endif %}
     <div class="container body-content span=8 offset=2">
         <div class="well">
             <form class="form-horizontal" action="{{ path('security_login') }}" method="post">

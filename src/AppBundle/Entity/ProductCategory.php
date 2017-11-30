@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * ProductCategory
@@ -26,7 +27,13 @@ class ProductCategory
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank(message="Category name cannot be empty")
+     * @Assert\Length(
+     *     min="3",
+     *     max="150",
+     *     minMessage="Category name must be at least {{ limit }} characters long!",
+     *     maxMessage="Category name cannot be more than {{ limit }} characters long!"
+     * )
      * @ORM\Column(name="name", type="string", length=255, unique=true)
      */
     private $name;
@@ -101,6 +108,11 @@ class ProductCategory
     public function getName()
     {
         return $this->name;
+    }
+
+    public function __toString()
+    {
+        return "".$this->id;
     }
 }
 

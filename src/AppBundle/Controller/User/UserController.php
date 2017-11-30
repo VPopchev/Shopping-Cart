@@ -53,8 +53,13 @@ class UserController extends BaseController
             $this->createCart($user);
             return $this->redirectToRoute('security_login');
         }
-        return $this->render('user/register.html.twig', [
-            'form' => $form->createView(), 'categories' => $this->categories]);
+        foreach($form->getErrors(true) as $error){
+            $this->addFlash('error',$error->getMessage());
+        }
+        return $this->render('user/register.html.twig',[
+            'form' => $form->createView()
+        ]);
+
     }
 
     /**

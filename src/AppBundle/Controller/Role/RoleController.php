@@ -52,6 +52,8 @@ class RoleController extends BaseController
             return $this->redirectToRoute('homepage');
         }
         if(in_array($roleName,$user->getRoles())){
+            $this->addFlash('error',
+                'User is already' . explode('_',$roleName)[1]);
             return $this->redirectToRoute('edit_roles',['id' => $user->getId()]);
         }
 
@@ -64,6 +66,8 @@ class RoleController extends BaseController
         $user->addRole($role);
         $em->merge($user);
         $em->flush();
+        $this->addFlash('success',
+            "User {$user->getUsername()} roles edited successful!");
         return $this->redirectToRoute('homepage');
     }
 }

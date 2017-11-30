@@ -36,7 +36,12 @@ class ProductController extends BaseController
             $em = $this->getDoctrine()->getManager();
             $em->persist($product);
             $em->flush();
+            $this->addFlash('success',
+                "Product {$product->getName()} added successful!");
             return $this->redirectToRoute('user_profile');
+        }
+        foreach ($form->getErrors(true) as $error){
+            $this->addFlash('error',$error->getMessage());
         }
         return $this->render('product/create.html.twig', [
             'form' => $form->createView(),
@@ -78,26 +83,31 @@ class ProductController extends BaseController
      */
     public function editAction(Product $product, Request $request)
     {
-
-
         if ($product === null){
             return $this->redirectToRoute("homepage");
         }
-
         /** @var User $currentUser */
         $currentUser = $this->getUser();
-        if(!$currentUser->isOwner($product) && !$currentUser->isAdmin()){
+        if(!$currentUser->isOwner($product) &&
+            !$currentUser->isAdmin() &&
+            !$currentUser->isEditor()){
             return $this->redirectToRoute("homepage");
         }
-
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
+            $category = $this->getDoctrine()
+                ->getRepository(ProductCategory::class)
+            ->find($product->getCategoryId());
+            $product->setCategory($category);
             $em = $this->getDoctrine()->getManager();
-            $em->merge($product);
             $em->flush();
+            $this->addFlash('success',
+                "Product {$product->getName()} successful edited!");
             return $this->redirectToRoute('user_profile');
+        }
+        foreach ($form->getErrors(true) as $error){
+            $this->addFlash('error',$error->getMessage());
         }
         return $this->render('product/edit.html.twig', [
             'product' => $product,
@@ -127,6 +137,8 @@ class ProductController extends BaseController
             $em = $this->getDoctrine()->getManager();
             $em->remove($product);
             $em->flush();
+            $this->addFlash('success',
+                "Product {$product->getName()} successful deleted!");
             return $this->redirectToRoute('user_profile');
         }
         return $this->render('product/delete.html.twig', [

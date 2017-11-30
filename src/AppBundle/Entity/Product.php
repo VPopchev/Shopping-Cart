@@ -27,27 +27,39 @@ class Product
 
     /**
      * @var int
-     *
+     * @Assert\NotBlank()
      * @ORM\Column(name="categoryId", type="integer",nullable=true)
      */
     private $categoryId;
 
     /**
      * @var string
+     * @Assert\NotBlank(
+     *     message="Product name cannot be empty!"
+     * )
+     * @Assert\Length(
+     *     min="3",
+     *     minMessage="Product name must be a least {{ limit }} characters long!"
+     * )
      * @ORM\Column(name="name", type="string", length=255)
      */
     private $name;
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank(
+     *     message="Product description cannot be empty!"
+     * )
      * @ORM\Column(name="description", type="text")
      */
     private $description;
 
     /**
      * @var float
-     *
+     * @Assert\Range(
+     *     min="0",
+     *     minMessage="Product Price cannot be less than {{ limit }}"
+     * )
      * @ORM\Column(name="price", type="float")
      */
     private $price;
@@ -55,6 +67,12 @@ class Product
     /**
      * @var int
      * @ORM\Column(name="quantity",type="integer")
+     *  @Assert\Range(
+     *     min="1",
+     *     max="1000",
+     *     minMessage="Product quantity must be at least {{ limit }}!",
+     *     maxMessage="Product quantity cannot be more than {{ limit }}"
+     * )
      */
     private $quantity;
 
@@ -144,6 +162,11 @@ class Product
      */
     public function setQuantity($quantity)
     {
+        if($quantity <= 0){
+            $this->setStatus('Inactive');
+            $this->quantity = 0;
+            return $this;
+        }
         $this->quantity = $quantity;
         return $this;
     }
@@ -280,5 +303,7 @@ class Product
     {
         return $this->userId;
     }
+
+
 }
 

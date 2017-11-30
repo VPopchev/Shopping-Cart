@@ -32,7 +32,11 @@ class CategoryController extends BaseController
             $em = $this->getDoctrine()->getManager();
             $em->persist($category);
             $em->flush();
+            $this->addFlash('success',"Category {$category->getName()} created successful!");
             return $this->redirectToRoute('manage_categories');
+        }
+        foreach($form->getErrors(true) as $error){
+            $this->addFlash('error',$error->getMessage());
         }
         return $this->render('category/manage.html.twig',[
             'categories' => $this->categories,
@@ -57,7 +61,7 @@ class CategoryController extends BaseController
         $em = $this->getDoctrine()->getManager();
         $em->remove($category);
         $em->flush();
-
+        $this->addFlash('success',"Category {$category->getName()} deleted successful!");
         return $this->redirectToRoute('manage_categories');
     }
 
