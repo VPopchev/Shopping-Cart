@@ -20,27 +20,43 @@ class ProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name',TextType::class)
-            ->add('description',TextType::class)
+            ->add('name',TextType::class,[
+                'attr' => ['class' => 'form-control'],
+                'label_attr' => ['class' => 'col-sm-4 control-label']
+            ])
+            ->add('description',TextType::class,[
+                'attr' => ['class' => 'form-control'],
+                'label_attr' => ['class' => 'col-sm-4 control-label']
+            ])
             ->add('quantity',IntegerType::class,[
                     'attr' => [
+                        'class' => 'form-control',
                         'min' => 1,
                         'max' => 1000
-                    ]
+                    ],
+                'label_attr' => ['class' => 'col-sm-4 control-label']
                 ])
             ->add('status',ChoiceType::class,[
                 'choices' => [
                     'Active' => 'Active',
                     'Inactive' => 'Inactive'
-                ]
+                ],
+                'attr' => ['class' => 'form-control'],
+                'label_attr' => ['class' => 'col-sm-4 control-label']
             ])
             ->add('categoryId', EntityType::class,[
                 'class' => 'AppBundle\Entity\ProductCategory',
                 'choice_label' => function(ProductCategory $category){
                     return $category->getName();
-                }
+                },
+                'attr' => ['class' => 'form-control'],
+                'label_attr' => ['class' => 'col-sm-4 control-label']
             ])
-            ->add('price',MoneyType::class,['currency' => 'BGN'])
+            ->add('price',MoneyType::class,[
+                'currency' => 'BGN',
+                'attr' => ['class' => 'form-control'],
+                'label_attr' => ['class' => 'col-sm-4 control-label']
+            ])
             ->add('create',SubmitType::class);
 
     }

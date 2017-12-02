@@ -19,17 +19,38 @@ class UserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username',TextType::class)
-            ->add('email', EmailType::class)
-            ->add('password',RepeatedType::class, array(
-                'type' => PasswordType::class,
-                'first_options' => array('label' => 'Password'),
-                'second_options' => array('label' => 'Repeat Password'),
-                'invalid_message' => 'Password mismatch!')
+            ->add('username', TextType::class, [
+                'label' => 'Username',
+                'label_attr' => ['class' => 'col-sm-4 control-label'],
+                'attr' => ['class' => 'form-control']
+            ])
+            ->add('email', EmailType::class, [
+                'label' => 'Email',
+                'label_attr' => ['class' => 'col-sm-4 control-label'],
+                'attr' => ['class' => 'form-control'],
+            ])
+            ->add('password', RepeatedType::class, array(
+                    'type' => PasswordType::class,
+                    'first_options' => array('label' => 'Password',
+                        'attr' => ['class' => 'form-control'],
+                        'label_attr' => ['class' => 'col-sm-4 control-label']),
+                    'second_options' => array('label' => 'Repeat Password',
+                        'attr' => ['class' => 'form-control'],
+                        'label_attr' => ['class' => 'col-sm-4 control-label']),
+                    'invalid_message' => 'Password mismatch!'
+                )
             )
-            ->add('firstName',TextType::class)
-            ->add('lastName',TextType::class)
-            ->add('register',SubmitType::class);
+            ->add('firstName', TextType::class, [
+                'attr' => ['class' => 'form-control'],
+                'label' => 'First Name',
+                'label_attr' => ['class' => 'col-sm-4 control-label']
+            ])
+            ->add('lastName', TextType::class, [
+                'label' => 'Last Name',
+                'label_attr' => ['class' => 'col-sm-4 control-label'],
+                'attr' => ['class' => 'form-control'],
+            ])
+            ->add('register', SubmitType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)

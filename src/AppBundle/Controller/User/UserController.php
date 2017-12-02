@@ -42,24 +42,27 @@ class UserController extends BaseController
         $user->setCash(1500);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $this->get('security.password_encoder')->encodePassword($user, $user->getPassword());
-            $user->setPassword($password);
-            $roleRepository = $this->getDoctrine()->getRepository(Role::class);
-            $userRole = $roleRepository->findOneBy(['name' => 'ROLE_USER']);
-            $user->addRole($userRole);
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
-            $this->createCart($user);
-            return $this->redirectToRoute('security_login');
+            return $this->registerUserAction($user);
         }
-        foreach($form->getErrors(true) as $error){
-            $this->addFlash('error',$error->getMessage());
-        }
+        $errors = $form->getErrors(true);
         return $this->render('user/register.html.twig',[
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'errors' => $errors
         ]);
+    }
 
+    private function registerUserAction(User $user)
+    {
+        $password = $this->get('security.password_encoder')->encodePassword($user, $user->getPassword());
+        $user->setPassword($password);
+        $roleRepository = $this->getDoctrine()->getRepository(Role::class);
+        $userRole = $roleRepository->findOneBy(['name' => 'ROLE_USER']);
+        $user->addRole($userRole);
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($user);
+        $em->flush();
+        $this->createCart($user);
+        return $this->redirectToRoute('security_login');
     }
 
     /**
@@ -81,4 +84,6 @@ class UserController extends BaseController
         $em->persist($cart);
         $em->flush();
     }
+
+
 }

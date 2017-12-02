@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -13,6 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
+ * @UniqueEntity(fields={"email"},message="Email already taken!")
  */
 class User implements UserInterface
 {
@@ -50,7 +52,7 @@ class User implements UserInterface
     /**
      * @var string
      * @Assert\NotBlank()
-     * @ORM\Column(name="email", type="string", length=100, unique=true)
+     * @ORM\Column(name="email", type="string", length=100)
      */
     private $email;
 
@@ -60,7 +62,7 @@ class User implements UserInterface
      *     min="3",
      *     minMessage="Your first name should be at least {{ limit }} characters long!"
      * )
-     * @ORM\Column(name="firstName", type="string", length=255)
+     * @ORM\Column(name="firstName", type="string", length=255,unique=true)
      */
     private $firstName;
 
