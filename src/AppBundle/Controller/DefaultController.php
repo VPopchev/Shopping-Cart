@@ -6,6 +6,7 @@ use AppBundle\Entity\Cart;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\ProductCategory;
 use AppBundle\Entity\User;
+use Doctrine\DBAL\Connection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,13 +18,30 @@ class DefaultController extends BaseController
      */
     public function indexAction(Request $request)
     {
+        $currentPage = $request->query->get('p') !== null ?
+            $request->query->get('p') : 1;
+        $products = $this->getProducts();
+        $pages = round(count($products) / 5);
+        $offset = ($currentPage - 1) * 5;
+        $products = array_slice($products,$offset,5);
+        $paginator = $this->createPaginator($currentPage,$pages,$products);
 
+        return $this->render('default/index.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+            'products' => $products,
+            'categories' => $this->categories,
+            'paginator' => $paginator,
+        ]);
+    }
 
-
+    private function getProducts()
+    {
+        /** @var Connection $conn */
         $products = $this
             ->getDoctrine()
             ->getRepository(Product::class)
             ->findBy(['status' => 'Active']);
+
         foreach ($products as $product){
             $category = $this->getDoctrine()
                 ->getRepository(ProductCategory::class)
@@ -34,10 +52,20 @@ class DefaultController extends BaseController
             $product->setCategory($category);
             $product->setOwner($owner);
         }
-        return $this->render('default/index.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
-            'products' => $products,
-            'categories' => $this->categories
-        ]);
+        return $products;
+    }
+
+    private function createPaginator($currentPage,$pages,$products)
+    {
+        $hasNext = $currentPage < $pages;
+        $hasPrevious = $currentPage > 1;
+
+        $paginator = new \AppBundle\Entity\Paginator();
+        $paginator->setTasks($products);
+        $paginator->setCurrentPage($currentPage);
+        $paginator->setAllPages($pages);
+        $paginator->setNext($hasNext);
+        $paginator->setPrevious($hasPrevious);
+        return $paginator;
     }
 }

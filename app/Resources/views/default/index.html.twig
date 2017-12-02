@@ -17,38 +17,55 @@
         </div>
     {% endfor %}
     <div class="row">
-        {% for product in products %}
-            <div class="col-sm-4">
-                <article style="border: dashed;padding: 5px;border-radius: 3px;margin: 5px">
-                    <header>
-                        <h2 style="text-align: center">{{ product.name }}</h2>
-                        <h4>Category: {{ product.category.name }}</h4>
-                    </header>
+    {% for product in products %}
+        <div class="col-sm-4">
+            <article style="border: dashed;padding: 5px;border-radius: 3px;margin: 5px">
+                <header>
+                    <h2 style="text-align: center">{{ product.name }}</h2>
+                    <h4>Category: {{ product.category.name }}</h4>
+                </header>
 
-                    <p style="border: solid;border-radius: 3px">
-                        Description: {{ product.description }}
-                    </p>
+                <p style="border: solid;border-radius: 3px">
+                    Description: {{ product.description }}
+                </p>
 
-                    <footer style="text-align: center">
-                        <b>Price: {{ product.price|number_format(2) }}лв.</b>
-                    </footer>
-                    <small class="author">
-                        Quantity: {{ product.quantity }}<br/>
-                        Owner: <a href="{{ path('view_user_profile',{'id':product.owner.id}) }}">{{ product.owner
-                            .username }}</a>
-                    </small>
+                <footer style="text-align: center">
+                    <b>Price: {{ product.price|number_format(2) }}лв.</b>
+                </footer>
+                <small class="author">
+                    Quantity: {{ product.quantity }}<br/>
+                    Owner: <a href="{{ path('view_user_profile',{'id':product.owner.id}) }}">{{ product.owner
+                        .username }}</a>
+                </small>
 
-                    <footer>
-                        <div class="pull-right">
-                            <a class="btn btn-default btn-xs"
-                               href="{{ path('view_product', {'id': product.id}) }}">View product &raquo;</a>
-                        </div>
-                    </footer>
-                </article>
-            </div>
+                <footer>
+                    <div class="pull-right">
+                        <a class="btn btn-default btn-xs"
+                           href="{{ path('view_product', {'id': product.id}) }}">View product &raquo;</a>
+                    </div>
+                </footer>
+            </article>
+        </div>
 
-            </div>
+        </div>
+    {% endfor %}
+    <div class="bottom">
+        {% if paginator.hasPrevious %}
+            <a href="?p=1">First</a> §§
+            <a href="?p={{ paginator.currentPage - 1 }}">Previous</a> |
+        {% endif %}
+        {% for i in 1..paginator.allPages %}
+            {% if paginator.currentPage == i %}
+                {{ i }}
+            {% else %}
+                <a href="?p={{ i }}">{{ i }}</a>
+            {% endif %}
         {% endfor %}
-
+        {% if paginator.hasNext %}
+            <a href="?p={{ paginator.currentPage + 1 }}">Next</a> §§
+            <a href="?p={{ paginator.allPages }}">Last</a>
+        {% endif %}
+    </div>
 {% endblock %}
+
 
