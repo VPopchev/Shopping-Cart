@@ -7044,6 +7044,14 @@ a.list-group-item-danger.active:focus {
 .modal .close {
   color: #2c3e50;
 }
+
+article {
+  border: dashed;
+  padding: 5px;
+  border-radius: 3px;
+  margin: 10px
+}
+
 .popover {
   color: #2c3e50;
 }

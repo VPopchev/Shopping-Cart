@@ -22,20 +22,6 @@ class Cart
      */
     private $id;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="userId", type="integer")
-     */
-    private $userId;
-
-
-    /**
-     * @var User
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\User", inversedBy="cart")
-     * @ORM\JoinColumn(name="userId",referencedColumnName="id")
-     */
-    private $user;
 
     /**
      * @var Product[]|ArrayCollection
@@ -56,8 +42,6 @@ class Cart
     }
 
 
-
-
     /**
      * Get id
      *
@@ -68,29 +52,6 @@ class Cart
         return $this->id;
     }
 
-    /**
-     * Set userId
-     *
-     * @param string $userId
-     *
-     * @return Cart
-     */
-    public function setUserId($userId)
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    /**
-     * Get userId
-     *
-     * @return string
-     */
-    public function getUserId()
-    {
-        return $this->userId;
-    }
 
     /**
      * @return ArrayCollection|Product[]
@@ -108,31 +69,18 @@ class Cart
         $this->products[] = $product;
     }
 
-    /**
-     * @return User
-     */
-    public function getUser(): User
+
+    public function getTotal()
     {
-        return $this->user;
-    }
-
-    /**
-     * @param User $user
-     */
-    public function setUser(User $user)
-    {
-        $this->user = $user;
-    }
-
-
-    public function getTotal(){
         $sum = 0;
-        foreach ($this->products as $product){
+        foreach ($this->products as $product) {
             $sum += $product->getPrice();
         }
         return $sum;
     }
-    public function clearCart(){
+
+    public function clearCart()
+    {
         $this->products = [];
     }
 }

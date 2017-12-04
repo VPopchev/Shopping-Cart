@@ -10,9 +10,10 @@ use AppBundle\Form\ProductType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
-class ProductController extends BaseController
+class ProductController extends Controller
 {
     /**
      * @Route("product/create", name="create_product")
@@ -23,26 +24,19 @@ class ProductController extends BaseController
     public function createAction(Request $request)
     {
         $product = new Product();
-
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             return $this->saveProduct($product);
         }
         return $this->render('product/create.html.twig', [
-            'form' => $form->createView(),
-            'categories' => $this->categories
+            'form' => $form->createView()
         ]);
     }
 
     private function saveProduct(Product $product)
     {
         $product->setOwner($this->getUser());
-        $category = $this
-            ->getDoctrine()
-            ->getRepository(ProductCategory::class)
-            ->find($product->getCategoryId());
-        $product->setCategory($category);
         $em = $this->getDoctrine()->getManager();
         $em->persist($product);
         $em->flush();
@@ -57,28 +51,26 @@ class ProductController extends BaseController
     public function listAction(ProductCategory $category)
     {
         return $this->render('product/listByCategory.html.twig', [
-            'category' => $category,
-            'categories' => $this->categories
+            'category' => $category
         ]);
     }
 
     /**
      * @Route("product/view/{id}",name="view_product")
      */
-    public function viewAction(Product $product, Request $request)
+    public function viewAction(int $id)
     {
+        $product = $this->getDoctrine()
+            ->getRepository(Product::class)
+            ->getProductWithCategory($id);
         /** @var User $currentUser */
         $currentUser = $this->getUser();
         if((!$currentUser->isEditor() && !$currentUser->isAdmin() && !$currentUser->isOwner($product)) &&
             $product->getStatus() == 'Inactive'){
             return $this->redirectToRoute('homepage');
         }
-        $form = $this->createForm(ProductType::class, $product);
-        $form->handleRequest($request);
         return $this->render('product/view.html.twig', [
             'product' => $product,
-            'categories' => $this->categories,
-            'form' => $form->createView()
         ]);
     }
 
@@ -102,17 +94,11 @@ class ProductController extends BaseController
         if ($form->isSubmitted() && $form->isValid()) {
             return $this->editProduct($product);
         }
-        return $this->render('product/edit.html.twig', [
-            'product' => $product, 'form' => $form->createView(),
-            'categories' => $this->categories]);
+        return $this->render('product/edit.html.twig', ['form' => $form->createView()]);
     }
 
     private function editProduct(Product $product)
     {
-        $category = $this->getDoctrine()
-            ->getRepository(ProductCategory::class)
-            ->find($product->getCategoryId());
-        $product->setCategory($category);
         $em = $this->getDoctrine()->getManager();
         $em->flush();
         $this->addFlash('success',
@@ -129,6 +115,7 @@ class ProductController extends BaseController
         if (null === $product) {
             return $this->redirectToRoute("homepage");
         }
+
         $currentUser = $this->getUser();
         if (!$currentUser->isOwner($product) && !$currentUser->isAdmin() && !$currentUser->isEditor()) {
             return $this->redirectToRoute("homepage");
@@ -143,9 +130,7 @@ class ProductController extends BaseController
             $this->addFlash('success', "Product {$product->getName()} successful deleted!");
             return $this->redirectToRoute('user_profile');
         }
-        return $this->render('product/delete.html.twig', [
-            'product' => $product, 'form' => $form->createView(),
-            'categories' => $this->categories]);
+        return $this->render('product/delete.html.twig',[ 'form' => $form->createView()]);
     }
 
 

@@ -111,6 +111,7 @@ class User implements UserInterface
     /**
      * @var Cart
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\Cart",mappedBy="user")
+     * @ORM\JoinColumn(name="cart_id",referencedColumnName="id")
      */
     private $cart;
 
@@ -380,7 +381,7 @@ class User implements UserInterface
      * @return bool
      */
     public function isOwner(Product $product){
-        return $product->getUserId() == $this->getId();
+        return $product->getOwner()->getId() == $this->getId();
     }
 
 

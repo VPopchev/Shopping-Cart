@@ -44,7 +44,7 @@ class ProductType extends AbstractType
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'col-sm-4 control-label']
             ])
-            ->add('categoryId', EntityType::class,[
+            ->add('category', EntityType::class,[
                 'class' => 'AppBundle\Entity\ProductCategory',
                 'choice_label' => function(ProductCategory $category){
                     return $category->getName();
@@ -56,8 +56,7 @@ class ProductType extends AbstractType
                 'currency' => 'BGN',
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'col-sm-4 control-label']
-            ])
-            ->add('create',SubmitType::class);
+            ]);
 
     }
 

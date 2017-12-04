@@ -2,57 +2,40 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Cart;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\ProductCategory;
-use AppBundle\Entity\User;
-use Doctrine\DBAL\Connection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
-class DefaultController extends BaseController
+class DefaultController extends Controller
 {
     /**
      * @Route("/", name="homepage")
      */
     public function indexAction(Request $request)
     {
+        $categories = $this
+            ->getDoctrine()
+            ->getRepository(ProductCategory::class)
+            ->getProductsWithCategory();
         $currentPage = $request->query->get('p') !== null ?
             $request->query->get('p') : 1;
-        $products = $this->getProducts();
-        $pages = round(count($products) / 5);
+        $products = $this
+            ->getDoctrine()
+            ->getRepository(Product::class)
+            ->getAllWithCategories();
+        $pages = ceil(count($products) / 5);
         $offset = ($currentPage - 1) * 5;
         $products = array_slice($products,$offset,5);
         $paginator = $this->createPaginator($currentPage,$pages,$products);
 
         return $this->render('default/index.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
-            'products' => $products,
-            'categories' => $this->categories,
+            'categories' => $categories,
             'paginator' => $paginator,
+            'products' => $products
         ]);
-    }
-
-    private function getProducts()
-    {
-        /** @var Connection $conn */
-        $products = $this
-            ->getDoctrine()
-            ->getRepository(Product::class)
-            ->findBy(['status' => 'Active']);
-
-        foreach ($products as $product){
-            $category = $this->getDoctrine()
-                ->getRepository(ProductCategory::class)
-                ->find($product->getCategoryId());
-            $owner = $this->getDoctrine()
-                ->getRepository(User::class)
-                ->find($product->getUserId());
-            $product->setCategory($category);
-            $product->setOwner($owner);
-        }
-        return $products;
     }
 
     private function createPaginator($currentPage,$pages,$products)

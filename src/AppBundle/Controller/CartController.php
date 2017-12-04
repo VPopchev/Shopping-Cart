@@ -6,10 +6,11 @@ use AppBundle\Entity\Cart;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 
-class CartController extends BaseController
+class CartController extends Controller
 {
     /**
      * @Route("product/add/{id}",name="add_to_cart")
@@ -33,8 +34,7 @@ class CartController extends BaseController
         $em->flush();
         $this->addFlash('success',"{$product->getName()} added to cart successfully!");
         return $this->redirectToRoute('view_product',[
-            'product'=> $product,
-            'id' => $product->getId(),
+            'id' => $product->getId()
         ]);
     }
 

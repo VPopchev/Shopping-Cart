@@ -49,8 +49,7 @@ class UserType extends AbstractType
                 'label' => 'Last Name',
                 'label_attr' => ['class' => 'col-sm-4 control-label'],
                 'attr' => ['class' => 'form-control'],
-            ])
-            ->add('register', SubmitType::class);
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

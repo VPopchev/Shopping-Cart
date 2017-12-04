@@ -10,10 +10,11 @@ use AppBundle\Form\ProductCategoryType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 
-class CategoryController extends BaseController
+class CategoryController extends Controller
 {
     /**
      * @Route("category/manage",name="manage_categories")
@@ -38,8 +39,11 @@ class CategoryController extends BaseController
         foreach($form->getErrors(true) as $error){
             $this->addFlash('error',$error->getMessage());
         }
+        $categories = $this->getDoctrine()
+            ->getRepository(ProductCategory::class)
+            ->findAll();
         return $this->render('category/manage.html.twig',[
-            'categories' => $this->categories,
+            'categories' => $$categories,
             'form' => $form->createView()
         ]);
     }

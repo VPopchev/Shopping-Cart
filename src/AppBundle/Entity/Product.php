@@ -25,12 +25,6 @@ class Product
      */
     private $id;
 
-    /**
-     * @var int
-     * @Assert\NotBlank()
-     * @ORM\Column(name="categoryId", type="integer",nullable=true)
-     */
-    private $categoryId;
 
     /**
      * @var string
@@ -67,7 +61,7 @@ class Product
     /**
      * @var int
      * @ORM\Column(name="quantity",type="integer")
-     *  @Assert\Range(
+     * @Assert\Range(
      *     min="1",
      *     max="1000",
      *     minMessage="Product quantity must be at least {{ limit }}!",
@@ -75,13 +69,6 @@ class Product
      * )
      */
     private $quantity;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="userId", type="integer")
-     */
-    private $userId;
 
 
     /**
@@ -95,7 +82,7 @@ class Product
     /**
      * @var User
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="products")
-     * @ORM\JoinColumn(name="userId",referencedColumnName="id")
+     * @ORM\JoinColumn(name="userId",referencedColumnName="id",onDelete="CASCADE")
      */
     private $owner;
 
@@ -121,18 +108,18 @@ class Product
     }
 
 
-
-
     /**
      * @param User $user
      * @return Product
      */
-    public function setOwner(User $user){
+    public function setOwner(User $user)
+    {
         $this->owner = $user;
         return $this;
     }
 
-    public function getOwner(){
+    public function getOwner()
+    {
         return $this->owner;
     }
 
@@ -141,12 +128,14 @@ class Product
      * @param ProductCategory|null $category
      * @return Product
      */
-    public function setCategory(?ProductCategory $category){
-            $this->category = $category;
-            return $this;
+    public function setCategory(?ProductCategory $category)
+    {
+        $this->category = $category;
+        return $this;
     }
 
-    public function getCategory(){
+    public function getCategory()
+    {
         return $this->category;
     }
 
@@ -162,7 +151,7 @@ class Product
      */
     public function setQuantity($quantity)
     {
-        if($quantity <= 0){
+        if ($quantity <= 0) {
             $this->setStatus('Inactive');
             $this->quantity = 0;
             return $this;
@@ -170,8 +159,6 @@ class Product
         $this->quantity = $quantity;
         return $this;
     }
-
-
 
 
     /**
@@ -184,29 +171,6 @@ class Product
         return $this->id;
     }
 
-    /**
-     * Set categoryId
-     *
-     * @param integer $categoryId
-     *
-     * @return Product
-     */
-    public function setCategoryId($categoryId)
-    {
-        $this->categoryId = $categoryId;
-
-        return $this;
-    }
-
-    /**
-     * Get categoryId
-     *
-     * @return int
-     */
-    public function getCategoryId()
-    {
-        return $this->categoryId;
-    }
 
     /**
      * Set name
@@ -278,30 +242,6 @@ class Product
     public function getPrice()
     {
         return $this->price;
-    }
-
-    /**
-     * Set userId
-     *
-     * @param integer $userId
-     *
-     * @return Product
-     */
-    public function setUserId($userId)
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    /**
-     * Get userId
-     *
-     * @return int
-     */
-    public function getUserId()
-    {
-        return $this->userId;
     }
 
 

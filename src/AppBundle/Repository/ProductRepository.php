@@ -10,4 +10,19 @@ namespace AppBundle\Repository;
  */
 class ProductRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function getProductWithCategory(int $id){
+        $em = $this->getEntityManager();
+        $query = $em->createQuery('SELECT a,c FROM AppBundle:Product a
+                              JOIN a.category c
+                              WHERE a.id = ' . $id);
+        return $query->getOneOrNullResult();
+    }
+
+    public function getAllWithCategories(){
+        $em = $this->getEntityManager();
+        $query = $em->createQuery("SELECT a,c FROM AppBundle:Product a
+                              JOIN a.category c
+                              WHERE a.status = 'active'");
+        return $query->getResult();
+    }
 }

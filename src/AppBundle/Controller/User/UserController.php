@@ -2,18 +2,17 @@
 
 namespace AppBundle\Controller\User;
 
-use AppBundle\Controller\BaseController;
 use AppBundle\Entity\Cart;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
-class UserController extends BaseController
+class UserController extends Controller
 {
 
     /**
@@ -25,8 +24,7 @@ class UserController extends BaseController
         /** @var User $user */
         $user = $this->getUser();
         return $this->render('user/profile.html.twig', array(
-            'user' => $user,
-            'categories' => $this->categories,
+            'user' => $user
         ));
     }
 
@@ -58,10 +56,11 @@ class UserController extends BaseController
         $roleRepository = $this->getDoctrine()->getRepository(Role::class);
         $userRole = $roleRepository->findOneBy(['name' => 'ROLE_USER']);
         $user->addRole($userRole);
+        $user->setCart($this->createCart());
         $em = $this->getDoctrine()->getManager();
+
         $em->persist($user);
         $em->flush();
-        $this->createCart($user);
         return $this->redirectToRoute('security_login');
     }
 
@@ -70,19 +69,19 @@ class UserController extends BaseController
      */
     public function viewUserProfile(User $user){
         return $this->render('user/userProfileView.html.twig',
-            ['user' => $user,'categories' => $this->categories]);
+            ['user' => $user]);
     }
 
 
 
 
-    private function createCart($user)
+    private function createCart()
     {
         $cart = new Cart();
-        $cart->setUser($user);
         $em = $this->getDoctrine()->getManager();
         $em->persist($cart);
         $em->flush();
+        return $cart;
     }
 
 
