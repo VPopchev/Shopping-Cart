@@ -1,13 +1,14 @@
 {% extends 'base.html.twig' %}
 {% block main %}
     <h1>{{ category.name }} Products</h1>
-    <div class="container body-content">
-        <div class="form-group">
-            {% for product in category.activeProducts %}
-            <div class="col-sm-4">
+
+    <div class="row">
+        {% for product in paginator.tasks %}
+            <div class="col-md-4">
                 <article style="border: dashed;padding: 5px;border-radius: 3px">
                     <header>
                         <h2 style="text-align: center">{{ product.name }}</h2>
+                        <img src="{{ asset('app/images/' ~ product.image) }}" class="img-responsive"/>
                         <h4>Category: {{ product.category.name }}</h4>
                     </header>
 
@@ -30,8 +31,23 @@
                     </footer>
                 </article>
             </div>
-
-        </div>
         {% endfor %}
+    </div>
+    <div class="text-center">
+        {% if paginator.hasPrevious %}
+            <a href="?p=1">First</a> §§
+            <a href="?p={{ paginator.currentPage - 1 }}">Previous</a> |
+        {% endif %}
+        {% for i in 1..paginator.allPages %}
+            {% if paginator.currentPage == i %}
+                {{ i }}
+            {% else %}
+                <a href="?p={{ i }}">{{ i }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if paginator.hasNext %}
+            <a href="?p={{ paginator.currentPage + 1 }}">Next</a> §§
+            <a href="?p={{ paginator.allPages }}">Last</a>
+        {% endif %}
     </div>
 {% endblock %}

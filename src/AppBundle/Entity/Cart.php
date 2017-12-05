@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Cart
  *
- * @ORM\Table(name="cart")
+ * @ORM\Table(name="carts")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\CartRepository")
  */
 class Cart

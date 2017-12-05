@@ -42,10 +42,10 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label" for="user_roles">Change Role</label>
                         <div class="col-sm-4 ">
-                            <input class="form-control" type="radio" name="role" id="user_roles" value="ROLE_EDITOR">
-                            Editor<br/>
-                            <input class="form-control" type="radio" name="role" id="user_roles" value="ROLE_ADMIN">
-                            Admin
+                            <select name="role" multiple id="user_roles">
+                                <option {{ user.isEditor() ? 'selected': '' }} value="ROLE_EDITOR">Editor</option>
+                                <option {{ user.isAdmin() ? 'selected': '' }} value="ROLE_ADMIN">Admin</option>
+                            </select>
                         </div>
                     </div>
                     <input type="hidden" name="user[password]" value="{{ user.password }}">

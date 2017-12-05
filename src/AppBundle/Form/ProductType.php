@@ -3,14 +3,16 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Product;
-use AppBundle\Entity\ProductCategory;
+use AppBundle\Entity\Category;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,7 +26,7 @@ class ProductType extends AbstractType
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'col-sm-4 control-label']
             ])
-            ->add('description',TextType::class,[
+            ->add('description',TextareaType::class,[
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'col-sm-4 control-label']
             ])
@@ -45,8 +47,8 @@ class ProductType extends AbstractType
                 'label_attr' => ['class' => 'col-sm-4 control-label']
             ])
             ->add('category', EntityType::class,[
-                'class' => 'AppBundle\Entity\ProductCategory',
-                'choice_label' => function(ProductCategory $category){
+                'class' => 'AppBundle\Entity\Category',
+                'choice_label' => function(Category $category){
                     return $category->getName();
                 },
                 'attr' => ['class' => 'form-control'],
@@ -56,7 +58,12 @@ class ProductType extends AbstractType
                 'currency' => 'BGN',
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'col-sm-4 control-label']
-            ]);
+            ])
+        ->add('image',FileType::class,[
+            'required' => false,
+            'label' => 'Product Image',
+            'label_attr' => ['class' => 'col-sm-4 control-label'],
+        ]);
 
     }
 

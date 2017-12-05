@@ -25,4 +25,52 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
                               WHERE a.status = 'active'");
         return $query->getResult();
     }
+
+    public function count():int {
+        $em = $this->getEntityManager();
+        $query = $em->createQuery("SELECT COUNT(a.id) c 
+                                        FROM AppBundle:Product a ");
+
+        return intval($query->getOneOrNullResult()['c']);
+    }
+
+    public function findAllPerPage(int $limit = 0,int $offset = 0)
+    {
+        $limitClause = '';
+        if($limit > 0){
+            $limitClause = 'LIMIT ' . $limit . ' OFFSET ' . $offset;
+        }
+        $em = $this->getEntityManager();
+        $query = $em->createQuery("SELECT a,c FROM AppBundle:Product a
+                              JOIN a.category c
+                              WHERE a.status = 'active'");
+
+        $query->setFirstResult($offset);
+        $query->setMaxResults($limit);
+
+        return $query->getResult();
+    }
+
+    public function findByCategoryPerPage(int $limit = 0,int $offset = 0,int $categoryId = -1)
+    {
+        $limitClause = '';
+
+        if($limit > 0){
+            $limitClause = 'LIMIT ' . $limit . ' OFFSET ' . $offset;
+        }
+
+        $em = $this->getEntityManager();
+        if ($categoryId > -1){
+            $query = $em->createQuery("SELECT a,c FROM AppBundle:Product a
+                              JOIN a.category c
+                              WHERE a.status = 'active' AND c.id = " . $categoryId);
+        } else {
+            $query = $em->createQuery("SELECT a,c FROM AppBundle:Product a
+                              JOIN a.category c
+                              WHERE a.status = 'active'");
+        }
+        $query->setFirstResult($offset);
+        $query->setMaxResults($limit);
+        return $query->getResult();
+    }
 }

@@ -19,21 +19,18 @@ class CartController extends Controller
     {
         /** @var Cart $userCart */
         $userCart = $this->getUser()->getCart();
-        $userProds = $userCart->getProducts();
-
-        if ($userCart->getProducts()->contains($product)){
-            $this->addFlash('error','You already added this product to cart!');
+        if ($userCart->getProducts()->contains($product)) {
+            $this->addFlash('error', 'You already added this product to cart!');
             return $this->redirectToRoute("view_product",
-                ['product' => $product,
-                    'id' => $product->getId()]);
+                ['product' => $product, 'id' => $product->getId()]);
         }
         $em = $this->getDoctrine()->getManager();
         $userCart->addProduct($product);
 
         $em->persist($userCart);
         $em->flush();
-        $this->addFlash('success',"{$product->getName()} added to cart successfully!");
-        return $this->redirectToRoute('view_product',[
+        $this->addFlash('success', "{$product->getName()} added to cart successfully!");
+        return $this->redirectToRoute('view_product', [
             'id' => $product->getId()
         ]);
     }
@@ -41,21 +38,23 @@ class CartController extends Controller
     /**
      * @Route("product/remove/{id}",name="remove_from_cart")
      */
-    public function removeAction(Product $product){
+    public function removeAction(Product $product)
+    {
         /** @var Cart $userCart */
         $userCart = $this->getUser()->getCart();
         $userCart->getProducts()->removeElement($product);
         $em = $this->getDoctrine()->getManager();
         $em->merge($userCart);
         $em->flush();
-        $this->addFlash('success',"{$product->getName()} was removed from cart!");
+        $this->addFlash('success', "{$product->getName()} was removed from cart!");
         return $this->redirectToRoute('user_profile');
     }
 
     /**
      * @Route("product/clearCart",name="clear_cart")
      */
-    public function clearCart(){
+    public function clearCart()
+    {
         /** @var Cart $userCart */
         $userCart = $this->getUser()->getCart();
         $userCart->clearCart();
@@ -69,20 +68,24 @@ class CartController extends Controller
     /**
      * @Route("product/cashOut",name="cash_out_cart")
      */
-    public function cashOutAction(){
+    public function cashOutAction()
+    {
         /** @var User $user */
         $user = $this->getUser();
         /** @var Cart $userCart */
         $userCart = $user->getCart();
         $em = $this->getDoctrine()->getManager();
-        foreach ($userCart->getProducts() as $product){
-            $product->setQuantity($product->getQuantity() - 1);
-            $em->merge($product);
+        foreach ($userCart->getProducts() as $product) {
+            $productOwner = $product->getOwner();
+            $productOwner->setCash($product->getPrice());
+            $product->setOwner($user);
+            $em->merge($productOwner);
         }
-        $user->setCash($user->getCash() - $userCart->getTotal());
+        $user->decreaseCash($userCart->getTotal());
         $this->clearCart();
+        $em->merge($user);
         $em->flush();
-        $this->addFlash('success',"CashOut successful");
+        $this->addFlash('success', "CashOut successful");
         return $this->redirectToRoute('user_profile');
     }
 }

@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * User
  *
- * @ORM\Table(name="user")
+ * @ORM\Table(name="users")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  * @UniqueEntity(fields={"email"},message="Email already taken!")
  */
@@ -102,7 +102,7 @@ class User implements UserInterface
      * @var ArrayCollection
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Role")
      * @ORM\JoinTable(name="users_roles",
-     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id",onDelete="CASCADE")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="role_id",referencedColumnName="id")})
      */
     private $roles;
@@ -339,6 +339,14 @@ class User implements UserInterface
     public function getCash()
     {
         return $this->cash;
+    }
+
+    public function increaseCash($cash){
+        $this->cash += $cash;
+    }
+
+    public function decreaseCash($cash){
+        $this->cash -= $cash;
     }
 
     /**

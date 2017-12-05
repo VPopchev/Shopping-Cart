@@ -3,7 +3,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Product;
-use AppBundle\Entity\ProductCategory;
+use AppBundle\Entity\Category;
+use AppBundle\Service\Paginator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,26 +16,23 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
+        $repo = $this->getDoctrine()->getRepository(Product::class);
         $categories = $this
             ->getDoctrine()
-            ->getRepository(ProductCategory::class)
-            ->getProductsWithCategory();
+            ->getRepository(Category::class)
+            ->getCategoryWithProducts();
         $currentPage = $request->query->get('p') !== null ?
             $request->query->get('p') : 1;
-        $products = $this
-            ->getDoctrine()
-            ->getRepository(Product::class)
-            ->getAllWithCategories();
-        $pages = ceil(count($products) / 5);
-        $offset = ($currentPage - 1) * 5;
-        $products = array_slice($products,$offset,5);
+        $offset = ($currentPage - 1) * 6;
+        $products = $repo->findAllPerPage(6,$offset);
+        $allProducts = $repo->count();
+        $pages = ceil($allProducts / 6);
         $paginator = $this->createPaginator($currentPage,$pages,$products);
 
         return $this->render('default/index.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
             'categories' => $categories,
             'paginator' => $paginator,
-            'products' => $products
         ]);
     }
 
@@ -43,7 +41,7 @@ class DefaultController extends Controller
         $hasNext = $currentPage < $pages;
         $hasPrevious = $currentPage > 1;
 
-        $paginator = new \AppBundle\Entity\Paginator();
+        $paginator = new Paginator();
         $paginator->setTasks($products);
         $paginator->setCurrentPage($currentPage);
         $paginator->setAllPages($pages);

@@ -1,8 +1,7 @@
 <?php
 
-namespace AppBundle\Controller\Role;
+namespace AppBundle\Controller;
 
-use AppBundle\Controller\BaseController;
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
@@ -11,7 +10,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
 class RoleController extends Controller
 {
     /**
@@ -29,8 +27,7 @@ class RoleController extends Controller
         $form = $this->createForm(UserType::class,$user);
         return $this->render('user/roleChange.html.twig',[
             'form' => $form->createView(),
-            'user' => $user,
-            'categories' => $this->categories,
+            'user' => $user
         ]);
     }
 
@@ -58,11 +55,8 @@ class RoleController extends Controller
             return $this->redirectToRoute('edit_roles',['id' => $user->getId()]);
         }
 
-        $role = $this->getDoctrine()
-            ->getRepository(Role::class)
+        $role = $this->getDoctrine()->getRepository(Role::class)
             ->findOneBy(['name' => $roleName]);
-
-
         $role->addUser($user);
         $user->addRole($role);
         $em->merge($user);

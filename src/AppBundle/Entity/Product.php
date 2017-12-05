@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Product
  *
- * @ORM\Table(name="product")
+ * @ORM\Table(name="products")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ProductRepository")
  */
 class Product
@@ -72,8 +72,8 @@ class Product
 
 
     /**
-     * @var ProductCategory
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ProductCategory"), inversedBy="products")
+     * @var Category
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Category"), inversedBy="products")
      * @ORM\JoinColumn(name="categoryId",referencedColumnName="id",onDelete="SET NULL")
      */
     private $category;
@@ -90,6 +90,31 @@ class Product
      * @ORM\Column(name="status",type="string")
      */
     private $status;
+
+
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\File(mimeTypes={"image/jpeg"},maxSize="5500k")
+     */
+    private $image;
+
+    /**
+     * @return mixed
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    /**
+     * @param mixed $image
+     */
+    public function setImage($image)
+    {
+        $this->image = $image;
+    }
+
+
 
     /**
      * @return mixed
@@ -125,10 +150,10 @@ class Product
 
 
     /**
-     * @param ProductCategory|null $category
+     * @param Category|null $category
      * @return Product
      */
-    public function setCategory(?ProductCategory $category)
+    public function setCategory(?Category $category)
     {
         $this->category = $category;
         return $this;

@@ -9,12 +9,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * ProductCategory
+ * Category
  *
- * @ORM\Table(name="product_category")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\ProductCategoryRepository")
+ * @ORM\Table(name="categories")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\CategoryRepository")
  */
-class ProductCategory
+class Category
 {
     /**
      * @var int
@@ -67,7 +67,7 @@ class ProductCategory
 
     /**
      * @param Product $product
-     * @return ProductCategory
+     * @return Category
      */
     public function addProduct(Product $product){
         $this->products[] = $product;
@@ -91,7 +91,7 @@ class ProductCategory
      *
      * @param string $name
      *
-     * @return ProductCategory
+     * @return Category
      */
     public function setName($name)
     {

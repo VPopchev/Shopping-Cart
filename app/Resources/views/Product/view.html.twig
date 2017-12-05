@@ -17,7 +17,8 @@
                     <header>
                         <h2>{{ product.name }}</h2>
                     </header>
-
+                    <img src="{{ asset('app/images/' ~ product.image) }}" class="img-responsive"/>
+                    <p>Category: {{ product.category == null ? 'n/a': product.category.name }}</p>
                     <p>
                         {{ product.description }}
                     </p>
@@ -28,7 +29,8 @@
 
                     <small class="author">
                         Quantity: {{ product.quantity }}<br/>
-                        Owner: {{ product.owner.userName }}
+                        Owner: <a href="{{ path('view_user_profile',{'id': product.owner.id}) }}">{{ product.owner
+                            .userName }}</a>
                     </small>
 
                     <footer>

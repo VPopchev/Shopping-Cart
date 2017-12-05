@@ -1,5 +1,5 @@
 <?php
-namespace AppBundle\Entity;
+namespace AppBundle\Service;
 
 
 class Paginator
