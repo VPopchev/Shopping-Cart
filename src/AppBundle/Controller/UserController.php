@@ -43,7 +43,7 @@ class UserController extends Controller
             return $this->registerUserAction($user);
         }
         $errors = $form->getErrors(true);
-        return $this->render('user/register.html.twig',[
+        return $this->render('user/register.html.twig', [
             'form' => $form->createView(),
             'errors' => $errors
         ]);
@@ -67,13 +67,11 @@ class UserController extends Controller
     /**
      * @Route("user/userProfileView/{id}",name="view_user_profile")
      */
-    public function viewUserProfile(User $user){
+    public function viewUserProfile(User $user)
+    {
         return $this->render('user/userProfileView.html.twig',
             ['user' => $user]);
     }
-
-
-
 
     private function createCart()
     {
@@ -83,6 +81,4 @@ class UserController extends Controller
         $em->flush();
         return $cart;
     }
-
-
 }

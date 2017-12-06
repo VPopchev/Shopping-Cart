@@ -38,10 +38,10 @@ class ProductType extends AbstractType
                     ],
                 'label_attr' => ['class' => 'col-sm-4 control-label']
                 ])
-            ->add('status',ChoiceType::class,[
+            ->add('isActive',ChoiceType::class,[
                 'choices' => [
-                    'Active' => 'Active',
-                    'Inactive' => 'Inactive'
+                    'True' => '1',
+                    'False' => '0'
                 ],
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'col-sm-4 control-label']

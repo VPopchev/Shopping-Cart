@@ -3,7 +3,7 @@
     <h1>{{ category.name }} Products</h1>
 
     <div class="row">
-        {% for product in paginator.tasks %}
+        {% for product in paginator.products %}
             <div class="col-md-4">
                 <article style="border: dashed;padding: 5px;border-radius: 3px">
                     <header>
@@ -38,13 +38,15 @@
             <a href="?p=1">First</a> §§
             <a href="?p={{ paginator.currentPage - 1 }}">Previous</a> |
         {% endif %}
-        {% for i in 1..paginator.allPages %}
-            {% if paginator.currentPage == i %}
-                {{ i }}
-            {% else %}
-                <a href="?p={{ i }}">{{ i }}</a>
-            {% endif %}
-        {% endfor %}
+        {% if paginator.allPages > 0 %}
+            {% for i in 1..paginator.allPages %}
+                {% if paginator.currentPage == i %}
+                    {{ i }}
+                {% else %}
+                    <a href="?p={{ i }}">{{ i }}</a>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
         {% if paginator.hasNext %}
             <a href="?p={{ paginator.currentPage + 1 }}">Next</a> §§
             <a href="?p={{ paginator.allPages }}">Last</a>

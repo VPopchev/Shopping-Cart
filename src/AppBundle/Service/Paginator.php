@@ -2,12 +2,14 @@
 namespace AppBundle\Service;
 
 
+use AppBundle\Entity\Product;
+
 class Paginator
 {
     /**
-     * @var \Generator
+     * @var \Generator|Product[]
      */
-    private $tasks;
+    private $products;
 
     /**
      * @var integer
@@ -30,19 +32,37 @@ class Paginator
     private $hasNext;
 
     /**
+     * Paginator constructor.
+     * @param \Generator|Product[] $products
+     * @param int $currentPage
+     * @param int $allPages
+     * @param bool $hasPrevious
+     * @param bool $hasNext
+     */
+    public function __construct($currentPage,$allPages,$products)
+    {
+        $this->products = $products;
+        $this->currentPage = $currentPage;
+        $this->allPages = $allPages;
+        $this->hasPrevious = $currentPage > 1;
+        $this->hasNext = $currentPage < $allPages;
+    }
+
+
+    /**
      * @return \Generator
      */
-    public function getTasks()
+    public function getProducts()
     {
-        return $this->tasks;
+        return $this->products;
     }
 
     /**
      * @param \Generator|
      */
-    public function setTasks($tasks)
+    public function setProducts($products)
     {
-        $this->tasks = $tasks;
+        $this->products = $products;
     }
 
     /**

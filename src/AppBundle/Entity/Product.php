@@ -1,11 +1,7 @@
 <?php
 
 namespace AppBundle\Entity;
-
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\DBAL\Schema\Column;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -87,9 +83,9 @@ class Product
     private $owner;
 
     /**
-     * @ORM\Column(name="status",type="string")
+     * @ORM\Column(name="status",type="boolean")
      */
-    private $status;
+    private $isActive;
 
 
     /**
@@ -119,17 +115,17 @@ class Product
     /**
      * @return mixed
      */
-    public function getStatus()
+    public function getIsActive()
     {
-        return $this->status;
+        return $this->isActive;
     }
 
     /**
-     * @param mixed $status
+     * @param mixed $isActive
      */
-    public function setStatus($status)
+    public function setIsActive($isActive)
     {
-        $this->status = $status;
+        $this->isActive = $isActive;
     }
 
 
@@ -177,7 +173,7 @@ class Product
     public function setQuantity($quantity)
     {
         if ($quantity <= 0) {
-            $this->setStatus('Inactive');
+            $this->setIsActive(false);
             $this->quantity = 0;
             return $this;
         }

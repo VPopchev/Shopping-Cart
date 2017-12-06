@@ -5,6 +5,8 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -44,17 +46,25 @@ class RoleController extends Controller
         $roleName = $request->request->get('role');
 
         if (null === $roleName){
-            $user->removeRoles();
-            $em->merge($user);
-            $em->flush();
-            return $this->redirectToRoute('homepage');
-        }
-        if(in_array($roleName,$user->getRoles())){
-            $this->addFlash('error',
-                'User is already' . explode('_',$roleName)[1]);
-            return $this->redirectToRoute('edit_roles',['id' => $user->getId()]);
+            return $this->removeRoles($user,$em);
         }
 
+        if(!in_array($roleName,$user->getRoles())){
+            $this->addRole($user,$roleName,$em);
+        }
+        return $this->redirectToRoute('view_user_profile',['id' => $user->getId()]);
+    }
+
+    private function removeRoles(User $user,ObjectManager $em)
+    {
+        $user->removeRoles();
+        $em->merge($user);
+        $em->flush();
+        return $this->redirectToRoute('homepage');
+    }
+
+    private function addRole(User $user,$roleName,ObjectManager $em)
+    {
         $role = $this->getDoctrine()->getRepository(Role::class)
             ->findOneBy(['name' => $roleName]);
         $role->addUser($user);
@@ -63,6 +73,5 @@ class RoleController extends Controller
         $em->flush();
         $this->addFlash('success',
             "User {$user->getUsername()} roles edited successful!");
-        return $this->redirectToRoute('homepage');
     }
 }

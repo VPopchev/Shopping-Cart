@@ -34,12 +34,12 @@
     </div>
 
     <div class="row">
-    {% for product in paginator.tasks %}
+    {% for product in paginator.products %}
         <div class="col-md-4">
             <article >
                 <header>
                     <h2 style="text-align: center">{{ product.name }}</h2>
-                    <img src="{{ asset('app/images/' ~ product.image) }}" class="img-responsive"/>
+                    <img src="{{ asset('app/images/' ~ product.image) }}" width="365" height="260"/>
                     <h4>Category: {{ product.category.name }}</h4>
                 </header>
 
@@ -69,7 +69,7 @@
             <a href="?p=1">First</a> §§
             <a href="?p={{ paginator.currentPage - 1 }}">Previous</a> |
         {% endif %}
-        {% for i in 1..paginator.allPages %}
+        {% for i in range(1, paginator.allPages) %}
             {% if paginator.currentPage == i %}
                 {{ i }}
             {% else %}

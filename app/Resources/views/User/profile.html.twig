@@ -63,7 +63,7 @@
                 <article class="article">
                     <header>
                         <h2 style="text-align: center">{{ product.name }}</h2>
-                        <img src="{{ asset('app/images/' ~ product.image) }}" class="img-responsive"/>
+                        <img src="{{ asset('app/images/' ~ product.image) }}" width="365" height="260"/>
                         <h4>Category: {{ product.category == null ? 'n/a': product.category.name }}</h4>
                     </header>
 
@@ -76,7 +76,7 @@
                         <b>Price: {{ product.price|number_format(2) }}лв.</b>
                     </footer>
                     <small class="author">
-                        Status: {{ product.status }}<br/>
+                        Status: {{ product.isActive }}<br/>
                         Quantity: {{ product.quantity }}<br/>
                         Owner: {{ product.owner.username }}
                     </small>

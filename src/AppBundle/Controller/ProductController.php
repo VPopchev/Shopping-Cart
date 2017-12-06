@@ -58,11 +58,13 @@ class ProductController extends Controller
         $repo = $this->getDoctrine()->getRepository(Product::class);
         $currentPage = $request->query->get('p') !== null ?
             $request->query->get('p') : 1;
+
         $offset = ($currentPage - 1) * 6;
         $products = $repo->findByCategoryPerPage(6,$offset,$category->getId());
-        $allProducts = count($category->getProducts());
+        $allProducts = count($category->getActiveProducts());
         $pages = ceil($allProducts / 6);
-        $paginator = $this->createPaginator($currentPage,$pages,$products);
+
+        $paginator = new Paginator($currentPage,$pages,$products);
         return $this->render('product/listByCategory.html.twig', [
             'category' => $category,
             'paginator' => $paginator
@@ -76,9 +78,10 @@ class ProductController extends Controller
     {
         /** @var User $currentUser */
         $currentUser = $this->getUser();
+
         if ($currentUser != null && (
             !$currentUser->isEditor() && !$currentUser->isAdmin() && !$currentUser->isOwner($product)) &&
-            $product->getStatus() == 'Inactive') {
+            $product->getIsActive() == false) {
             return $this->redirectToRoute('homepage');
         }
 
@@ -147,6 +150,7 @@ class ProductController extends Controller
             $this->addFlash('success', "Product {$product->getName()} successful deleted!");
             return $this->redirectToRoute('user_profile');
         }
+
         return $this->render('product/delete.html.twig', ['form' => $form->createView()]);
     }
 
@@ -162,16 +166,5 @@ class ProductController extends Controller
         }
     }
 
-    private function createPaginator($currentPage, $pages, $products)
-    {
-        $hasNext = $currentPage < $pages;
-        $hasPrevious = $currentPage > 1;
-        $paginator = new Paginator();
-        $paginator->setTasks($products);
-        $paginator->setCurrentPage($currentPage);
-        $paginator->setAllPages($pages);
-        $paginator->setNext($hasNext);
-        $paginator->setPrevious($hasPrevious);
-        return $paginator;
-    }
+
 }

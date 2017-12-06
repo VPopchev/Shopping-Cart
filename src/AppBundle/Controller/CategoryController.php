@@ -52,7 +52,7 @@ class CategoryController extends Controller
         /** @var Product $product */
         foreach ($category->getProducts() as $product) {
             $product->setCategory(null);
-            $product->setStatus('Inactive');
+            $product->setIsActive('Inactive');
         }
         $em = $this->getDoctrine()->getManager();
         $em->remove($category);

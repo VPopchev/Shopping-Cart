@@ -58,10 +58,10 @@ class Category
         return $this->products;
     }
 
-    public function activeProducts(){
+    public function getActiveProducts(){
         $criteria = Criteria::create()->where(Criteria::expr()
-            ->eq("status",'Active'));
-        return $this->products->matching($criteria);
+            ->eq("isActive",'1'));
+        return $this->products->matching($criteria)->toArray();
     }
 
 
