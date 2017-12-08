@@ -11,16 +11,27 @@
             <h3>{{ msg }}</h3>
         </div>
     {% endfor %}
-    <div class="col-lg-2">
-        {{ user.email }} <br/>
-        Username: {{ user.username }}
-        <br>
-        First Name: {{ user.firstName }}
-        <br>
-        Last Name: {{ user.lastName }}
-        <br>
-        Cash: {{ user.cash }}лв.
-    </div>
+    <div class="container body-content">
+    <article>
+        <header>
+            <h2>{{ user.username }}</h2>
+        </header>
+        <p>
+            {{ user.firstName }}
+            {{ user.lastName }}
+        </p>
+        <p>
+            Email: {{ user.email }}
+        </p>
+        <p>
+            Cash: {{ user.cash }}
+        </p>
+        <small class="author">
+            Registration Date:{{ user.registrationDate|date }}
+        </small>
+        <footer>
+        </footer>
+    </article>
 
     <div class="col-lg-12">
         <h4>Cart</h4>
@@ -47,9 +58,13 @@
             </tr>
             </tbody>
         </table>
-        <div class="pull-right">
-            <a href="{{ path('cash_out_cart') }}">Cash Out Cart</a>
-        </div>
+        {% if user.cash >= user.cart.getTotal() %}
+            <div class="pull-right">
+                <a href="{{ path('cash_out_cart') }}">Cash Out Cart</a>
+            </div>
+        {% else %}
+            <p class="pull-right">You don't have enough cash for all these products, remove one or more products</p>
+        {% endif %}
         <div class="pull-left">
             <a href="{{ path('clear_cart') }}">Clear Cart</a>
         </div>
