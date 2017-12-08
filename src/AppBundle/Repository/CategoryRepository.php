@@ -21,4 +21,22 @@ class CategoryRepository extends \Doctrine\ORM\EntityRepository
     }
 
 
+    public function findProductsByCategory(int $limit = 0, int $offset = 0,
+                                                        int $categoryId = -1)
+    {
+        $categoryFilter = '';
+
+        $em = $this->getEntityManager();
+        if ($categoryId > -1) {
+            $categoryFilter = " AND c.id = $categoryId" ;
+        }
+        $query = $em->createQuery("SELECT a,c FROM AppBundle:Product a
+                                       JOIN a.category c
+                                       WHERE a.isActive = '1' " . $categoryFilter
+            .                         'ORDER BY a.price ASC');
+
+        $query->setFirstResult($offset);
+        $query->setMaxResults($limit);
+        return $query->getResult();
+    }
 }

@@ -53,10 +53,7 @@
         <div class="pull-left">
             <a href="{{ path('clear_cart') }}">Clear Cart</a>
         </div>
-    </div> <br/>
-
-
-
+    </div><br/>
     <div class="row">
         {% for product in user.products %}
             <div class="col-lg-4">
@@ -66,21 +63,17 @@
                         <img src="{{ asset('app/images/' ~ product.image) }}" width="365" height="260"/>
                         <h4>Category: {{ product.category == null ? 'n/a': product.category.name }}</h4>
                     </header>
-
-
                     <p style="border: solid;border-radius: 3px">
                         Description: {{ product.description }}
                     </p>
-
                     <footer style="text-align: center">
                         <b>Price: {{ product.price|number_format(2) }}лв.</b>
                     </footer>
                     <small class="author">
-                        Status: {{ product.isActive }}<br/>
+                        Status: {{ product.isActive ? 'Active' : 'Inactive' }}<br/>
                         Quantity: {{ product.quantity }}<br/>
                         Owner: {{ product.owner.username }}
                     </small>
-
                     <footer>
                         <div class="pull-right">
                             <a class="btn btn-default btn-xs"

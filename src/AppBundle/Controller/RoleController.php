@@ -17,15 +17,9 @@ class RoleController extends Controller
     /**
      * @Route("user/roleChange/{id}",name="edit_roles")
      * @Method("GET")
-     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
+     * @Security("has_role('ROLE_ADMIN')")
      */
     public function editRoles(User $user){
-        /** @var User $currentUser */
-        $currentUser = $this->getUser();
-
-        if(!$currentUser->isAdmin() && !$currentUser->isEditor()){
-            return $this->redirectToRoute('homepage');
-        }
         $form = $this->createForm(UserType::class,$user);
         return $this->render('user/roleChange.html.twig',[
             'form' => $form->createView(),
@@ -36,7 +30,7 @@ class RoleController extends Controller
     /**
      * @Route("user/roleChange/{id}",name="edit_roles_action")
      * @Method("POST")
-     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
+     * @Security("has_role('ROLE_ADMIN')")
      */
     public function editRolesAction(User $user,Request $request){
         $form = $this->createForm(UserType::class,$user);

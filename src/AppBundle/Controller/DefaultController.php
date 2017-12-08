@@ -11,23 +11,23 @@ use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
 {
+    const PRODUCTS_LIMIT = 6;
     /**
-     * @Route("/", name="homepage")
+     * @Route("/{page}", name="homepage")
      */
-    public function indexAction(Request $request)
+    public function indexAction(int $page = 1)
     {
         $repo = $this->getDoctrine()->getRepository(Product::class);
         $categories = $this
             ->getDoctrine()
             ->getRepository(Category::class)
             ->getCategoryWithProducts();
-        $currentPage = intval($request->query->get('p') !== null ?
-                                    $request->query->get('p') : 1);
-        $offset = ($currentPage - 1) * 6;
-        $products = $repo->findAllPerPage(6,$offset);
+
+        $offset = ($page - 1) * self::PRODUCTS_LIMIT;
+        $products = $repo->findAllPerPage(self::PRODUCTS_LIMIT,$offset);
         $allProducts = $repo->count();
-        $pages = ceil($allProducts / 6);
-        $paginator = new Paginator($currentPage,$pages,$products);
+        $pages = ceil($allProducts / self::PRODUCTS_LIMIT);
+        $paginator = new Paginator($page,$pages,$products);
 
         return $this->render('default/index.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
@@ -35,5 +35,4 @@ class DefaultController extends Controller
             'paginator' => $paginator,
         ]);
     }
-
 }

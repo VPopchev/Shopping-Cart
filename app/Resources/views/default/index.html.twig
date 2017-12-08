@@ -25,60 +25,56 @@
         </button>
         <ul class="dropdown-menu">
             {% for category in categories %}
-                <li><a href="{{ path('category_list',{'id':category.id}) }}">{{ category.name }}</a></li>
+                <li><a href="{{ path('category_products_list',{'id':category.id}) }}">{{ category.name }}</a></li>
             {% endfor %}
             {% if app.user and (app.user.isAdmin() or app.user.isEditor()) %}
                 <li><a href="{{ path('manage_categories') }}">Manage Categories</a></li>
             {% endif %}
         </ul>
     </div>
-
     <div class="row">
-    {% for product in paginator.products %}
-        <div class="col-md-4">
-            <article >
-                <header>
-                    <h2 style="text-align: center">{{ product.name }}</h2>
-                    <img src="{{ asset('app/images/' ~ product.image) }}" width="365" height="260"/>
-                    <h4>Category: {{ product.category.name }}</h4>
-                </header>
-
-                <p style="border: solid;border-radius: 3px">
-                    Description: {{ product.description }}
-                </p>
-
-                <footer style="text-align: center">
-                    <b>Price: {{ product.price|number_format(2) }}лв.</b>
-                </footer>
-                <small class="author">
-                    Quantity: {{ product.quantity }}<br/>
-                </small>
-
-                <footer>
-                    <div class="pull-right">
-                        <a class="btn btn-default btn-xs"
-                           href="{{ path('view_product', {'id': product.id}) }}">View product &raquo;</a>
-                    </div>
-                </footer>
-            </article>
-        </div>
-    {% endfor %}
+        {% for product in paginator.products %}
+            <div class="col-md-4">
+                <article class="col-md-12">
+                    <header>
+                        <h2 style="text-align: center">{{ product.name }}</h2>
+                        <img src="{{ asset('app/images/' ~ product.image) }}" width="365" height="260"/>
+                    </header>
+                    <p style="border: double;border-radius: 3px">
+                        {{ product.getSummary }}
+                    </p>
+                    <footer style="text-align: center">
+                        <b>Price: {{ product.price|number_format(2) }}лв.</b>
+                    </footer>
+                    <small class="author">
+                        Category: {{ product.category.name }}<br/>
+                        Quantity: {{ product.quantity }}
+                    </small>
+                    <footer>
+                        <div class="pull-right">
+                            <a class="btn btn-default btn-xs"
+                               href="{{ path('view_product', {'id': product.id}) }}">View product &raquo;</a>
+                        </div>
+                    </footer>
+                </article>
+            </div>
+        {% endfor %}
     </div>
     <div class="text-center">
         {% if paginator.hasPrevious %}
-            <a href="?p=1">First</a> §§
-            <a href="?p={{ paginator.currentPage - 1 }}">Previous</a> |
+            <a href="/1">First</a> §§
+            <a href="/{{ paginator.currentPage - 1 }}">Previous</a> |
         {% endif %}
         {% for i in range(1, paginator.allPages) %}
             {% if paginator.currentPage == i %}
                 {{ i }}
             {% else %}
-                <a href="?p={{ i }}">{{ i }}</a>
+                <a href="/{{ i }}">{{ i }}</a>
             {% endif %}
         {% endfor %}
         {% if paginator.hasNext %}
-            <a href="?p={{ paginator.currentPage + 1 }}">Next</a> §§
-            <a href="?p={{ paginator.allPages }}">Last</a>
+            <a href="/{{ paginator.currentPage + 1 }}">Next</a> §§
+            <a href="/{{ paginator.allPages }}">Last</a>
         {% endif %}
     </div>
 {% endblock %}

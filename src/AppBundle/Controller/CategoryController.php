@@ -6,6 +6,7 @@ use AppBundle\Entity\Product;
 use AppBundle\Entity\Category;
 use AppBundle\Entity\User;
 use AppBundle\Form\CategoryType;
+use AppBundle\Service\Paginator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -14,17 +15,16 @@ use Symfony\Component\HttpFoundation\Request;
 
 class CategoryController extends Controller
 {
+    const PRODUCTS_LIMIT = 6;
+
     /**
      * @Route("category/manage",name="manage_categories")
-     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
+     * @Security("has_role('ROLE_EDITOR')")
      */
     public function manageCategory(Request $request)
     {
         /** @var User $currentUser */
         $currentUser = $this->getUser();
-        if (!$currentUser->isAdmin() && !$currentUser->isEditor()) {
-            return $this->redirectToRoute('homepage');
-        }
         $category = new Category();
         $form = $this->createForm(CategoryType::class, $category);
         $form->handleRequest($request);
@@ -40,7 +40,29 @@ class CategoryController extends Controller
     }
 
     /**
+     * @Route("category/list/{id}/{page}",name="category_products_list")
+     */
+    public function listCategoryProductsAction(Category $category, Request $request,int $page = 1)
+    {
+        $repo = $this->getDoctrine()->getRepository(Category::class);
+
+        $offset = ($page - 1) * self::PRODUCTS_LIMIT;
+        $products = $repo->findProductsByCategory(self::PRODUCTS_LIMIT,
+                                                    $offset, $category->getId());
+
+        $allProducts = $category->getProducts()->count();
+        $pages = ceil($allProducts / self::PRODUCTS_LIMIT);
+
+        $paginator = new Paginator($page, $pages, $products);
+        return $this->render(':Category:listCategoryProducts.html.twig', [
+            'category' => $category,
+            'paginator' => $paginator
+        ]);
+    }
+
+    /**
      * @Route("category/remove/{id}",name="remove_category")
+     * @Security("has_role('ROLE_EDITOR')")
      */
     public function deleteCategory(Category $category)
     {
@@ -69,6 +91,4 @@ class CategoryController extends Controller
         $this->addFlash('success', "Category {$category->getName()} created successful!");
         return $this->redirectToRoute('manage_categories');
     }
-
-
 }

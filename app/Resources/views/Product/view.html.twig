@@ -13,38 +13,36 @@
     <div class="container">
         <div class="row">
             <div class="col-md-4">
-                <article>
+                <article class="col-md-12">
                     <header>
                         <h2>{{ product.name }}</h2>
                     </header>
                     <img src="{{ asset('app/images/' ~ product.image) }}" class="img-responsive"/>
-                    <p>Category: {{ product.category == null ? 'n/a': product.category.name }}</p>
                     <p>
                         {{ product.description }}
                     </p>
 
-                    <p>
+                    <p class="pull-right">
                         Цена: {{ product.price|number_format(2) }}лв.
+                        {% if (app.user != null and product.owner.id != app.user.id) %} <br/>
+                            <a class="pull-right" href="{{ path('add_to_cart',{'id': product.id}) }}">Add to Cart</a>
+                        {% endif %}
                     </p>
-
+                    <p>Category: {{ product.category == null ? 'n/a': product.category.name }}</p>
                     <small class="author">
+                        Status: {{ product.isActive ? 'Active' : 'Inactive' }}<br/>
                         Quantity: {{ product.quantity }}<br/>
                         Owner: <a href="{{ path('view_user_profile',{'id': product.owner.id}) }}">{{ product.owner
                             .userName }}</a>
                     </small>
+                    <hr>
                     <footer>
-
-                        {% if (app.user != null and product.owner.id != app.user.id) %}
-
-                            <a href="{{ path('add_to_cart',{'id': product.id}) }}">Add to Cart</a>
-
-                        {% endif %}
                         {% if (app.user != null and
                         (app.user.isowner(product) or app.user.isAdmin() or app.user.isEditor())) %}
                             <div class="pull-left">
                                 <a href="{{ path('edit_product',{'id': product.id}) }}">Edit Product</a>
-                            </div><br/>
-                            <div class="pull-left">
+                            </div>
+                            <div class="pull-right">
                                 <a href="{{ path('delete_product',{'id': product.id}) }}">Delete Product</a>
                             </div>
                         {% endif %}

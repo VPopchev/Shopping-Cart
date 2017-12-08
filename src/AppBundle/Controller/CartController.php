@@ -6,6 +6,7 @@ use AppBundle\Entity\Cart;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -14,6 +15,7 @@ class CartController extends Controller
 {
     /**
      * @Route("product/add/{id}",name="add_to_cart")
+     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      */
     public function addAction(Product $product, Request $request)
     {
@@ -37,6 +39,7 @@ class CartController extends Controller
 
     /**
      * @Route("product/remove/{id}",name="remove_from_cart")
+     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      */
     public function removeAction(Product $product)
     {
@@ -67,6 +70,7 @@ class CartController extends Controller
 
     /**
      * @Route("product/cashOut",name="cash_out_cart")
+     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      */
     public function cashOutAction()
     {

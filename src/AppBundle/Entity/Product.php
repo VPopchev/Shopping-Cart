@@ -265,6 +265,8 @@ class Product
         return $this->price;
     }
 
-
+    public function getSummary(){
+        return substr($this->description,0,50) . '...';
+    }
 }
 

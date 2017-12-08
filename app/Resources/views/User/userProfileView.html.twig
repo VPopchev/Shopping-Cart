@@ -5,23 +5,17 @@
             <header>
                 <h2>{{ user.username }}'s Profile</h2>
             </header>
-
             <p>
                 {{ user.firstName }}
                 {{ user.lastName }}
             </p>
-
             <p>
                 Email: {{ user.email }}
             </p>
-
-
             <small class="author">
                 Registration Date:{{ user.registrationDate|date }}
             </small>
-
             <footer>
-
             </footer>
             {% if (app.user != null and app.user.isAdmin()) %}
                 <a href="{{ path('edit_roles', {'id': user.id}) }}">Manage User</a>
@@ -38,21 +32,17 @@
                         <img src="{{ asset('app/images/' ~ product.image) }}" class="img-responsive"/>
                         <h4>Category: {{ product.category == null ? 'n/a': product.category.name }}</h4>
                     </header>
-
-
                     <p style="border: solid;border-radius: 3px">
                         Description: {{ product.description }}
                     </p>
-
                     <footer style="text-align: center">
                         <b>Price: {{ product.price|number_format(2) }}лв.</b>
                     </footer>
                     <small class="author">
-                        Status: {{ product.status }}<br/>
+                        Status: {{ product.isActive ? 'Active' : 'Inactive' }}<br/>
                         Quantity: {{ product.quantity }}<br/>
                         Owner: {{ product.owner.username }}
                     </small>
-
                     <footer>
                         <div class="pull-right">
                             <a class="btn btn-default btn-xs"
@@ -63,6 +53,4 @@
             </div>
         {% endfor %}
     </div>
-
-
 {% endblock %}

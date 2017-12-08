@@ -10,6 +10,7 @@
             {{ msg }}
         </div>
     {% endfor %}
+    <h4>Manage Categories</h4>
     <table class="table" border="1">
         <thead>
         <tr>
@@ -27,7 +28,7 @@
                 <td><a href="{{ path('remove_category',{'id': category.id}) }}">Delete category</a></td>
             </tr>
         {% endfor %}
-    </table>
+    </table> <br/>
     <div class="container body-content span=8 offset=2">
         <div class="well">
             {{ form_start(form) }}

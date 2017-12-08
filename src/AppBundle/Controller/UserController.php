@@ -40,7 +40,8 @@ class UserController extends Controller
         $user->setCash(1500);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            return $this->registerUserAction($user);
+            $this->saveUser($user);
+            return $this->redirectToRoute('security_login');
         }
         $errors = $form->getErrors(true);
         return $this->render('user/register.html.twig', [
@@ -49,10 +50,12 @@ class UserController extends Controller
         ]);
     }
 
-    private function registerUserAction(User $user)
+    private function saveUser(User $user)
     {
-        $password = $this->get('security.password_encoder')->encodePassword($user, $user->getPassword());
+        $password = $this->get('security.password_encoder')
+                         ->encodePassword($user, $user->getPassword());
         $user->setPassword($password);
+
         $roleRepository = $this->getDoctrine()->getRepository(Role::class);
         $userRole = $roleRepository->findOneBy(['name' => 'ROLE_USER']);
         $user->addRole($userRole);
@@ -61,7 +64,6 @@ class UserController extends Controller
 
         $em->persist($user);
         $em->flush();
-        return $this->redirectToRoute('security_login');
     }
 
     /**

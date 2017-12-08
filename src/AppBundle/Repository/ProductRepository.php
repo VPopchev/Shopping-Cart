@@ -13,6 +13,8 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ProductRepository extends \Doctrine\ORM\EntityRepository
 {
+
+
     public function getProductWithCategory(int $id)
     {
         $em = $this->getEntityManager();
@@ -35,40 +37,23 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
     {
         $em = $this->getEntityManager();
         $query = $em->createQuery("SELECT COUNT(a.id) c 
-                                        FROM AppBundle:Product a ");
+                                        FROM AppBundle:Product a 
+                                        WHERE a.isActive = 1");
 
         return intval($query->getOneOrNullResult()['c']);
     }
 
     public function findAllPerPage(int $limit = 0, int $offset = 0)
     {
-
         $em = $this->getEntityManager();
         $query = $em->createQuery("SELECT a,c FROM AppBundle:Product a
-                              JOIN a.category c
-                              WHERE a.isActive = 1");
+                                       JOIN a.category c
+                                       WHERE a.isActive = 1
+                                       ORDER BY a.price ASC");
 
         $query->setFirstResult($offset);
         $query->setMaxResults($limit);
 
         return $query->getResult();
     }
-
-    public function findByCategoryPerPage(int $limit = 0, int $offset = 0, int $categoryId = -1)
-    {
-        $categoryFilter = '';
-
-        $em = $this->getEntityManager();
-        if ($categoryId > -1) {
-            $categoryFilter = " AND c.id = $categoryId" ;
-        }
-        $query = $em->createQuery("SELECT a,c FROM AppBundle:Product a
-                              JOIN a.category c
-                              WHERE a.isActive = '1' " . $categoryFilter);
-
-        $query->setFirstResult($offset);
-        $query->setMaxResults($limit);
-        return $query->getResult();
-    }
-
 }
