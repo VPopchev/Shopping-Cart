@@ -23,7 +23,7 @@
         {% for category in  categories %}
             <tr>
                 <td>{{ category.id }}</td>
-                <td>{{ category.name }}</td>
+                <td>{{ category.parent ? category.parent.name ~ '/': '' }}{{ category.name }}</td>
                 <td>{{ category.products|length }}</td>
                 <td><a href="{{ path('remove_category',{'id': category.id}) }}">Delete category</a></td>
             </tr>
@@ -36,6 +36,9 @@
                 <legend>Create Category</legend>
                 <div class="form-group">
                         {{ form_row(form.name) }}
+                </div>
+                <div class="form-group">
+                    {{ form_row(form.parent) }}
                 </div>
                 <div class="form-group">
                     <div class="col-sm-4 col-sm-offset-4">

@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
 {% block main %}
     <h1>{{ category.name }} Products</h1>
+    {% for child in category.children %}
+        <a href="{{ path('category_products_list',{'id': child.id}) }}">{{ child.getName }}</a>
+    {% endfor %}
     <div class="row">
         {% for product in paginator.products %}
             <div class="col-md-4">

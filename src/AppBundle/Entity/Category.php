@@ -46,6 +46,20 @@ class Category
     private $products;
 
 
+    /**
+     * @var Category
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Category",mappedBy="parent")
+     */
+    private $children;
+
+    /**
+     * @var ArrayCollection|Category[]
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Category",inversedBy="children")
+     * @ORM\JoinColumn(name="parent_id",referencedColumnName="id",onDelete="CASCADE")
+     */
+    private $parent;
+
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -73,6 +87,40 @@ class Category
         $this->products[] = $product;
         return $this;
     }
+
+    /**
+     * @return Category
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+
+    /**
+     * @param Category $children
+     */
+    public function setChildren(Category $children)
+    {
+        $this->children = $children;
+    }
+
+    /**
+     * @return Category[]|ArrayCollection
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @param Category[]|ArrayCollection $parent
+     */
+    public function setParent($parent)
+    {
+        $this->parent = $parent;
+    }
+
+
 
 
 

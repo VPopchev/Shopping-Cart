@@ -1,6 +1,26 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
+    <div class="row">
+        {% for category in categories %}
+            <div class="dropdown col-md-2">
+                <button type="button" class="btn btn-primary dropdown-toggle form-control"
+                        data-toggle="dropdown">
+                    <span class="caret"></span>{{ category.name }}
+                </button>
+                <div class="dropdown-menu">
+                    {{ _self.recursiveCategory(category) }}
+                </div>
+                {#<li><a href="{{ path('category_products_list',{'id':category.id}) }}">{{ category.name }}</a></li>#}
+            </div>
+        {% endfor %}
+
+    </div>
+    {% if app.user and (app.user.isAdmin() or app.user.isEditor()) %}
+        <li><a href="{{ path('manage_categories') }}">Manage Categories</a></li>
+    {% endif %}
+
+
     {% if app.user %}
         <h1>Hello, {{ app.user.firstName }}!</h1>
     {% else %}
@@ -17,21 +37,21 @@
         </div>
     {% endfor %}
 
-
-    <div class="dropdown">
-        <button type="button" class="btn btn-primary dropdown-toggle"
-                data-toggle="dropdown">
-            <span class="caret"></span>Categories
-        </button>
-        <ul class="dropdown-menu">
-            {% for category in categories %}
-                <li><a href="{{ path('category_products_list',{'id':category.id}) }}">{{ category.name }}</a></li>
-            {% endfor %}
-            {% if app.user and (app.user.isAdmin() or app.user.isEditor()) %}
-                <li><a href="{{ path('manage_categories') }}">Manage Categories</a></li>
+    {% macro recursiveCategory(category) %}
+        <li>
+            <a href="{{ path('category_products_list', {'id': category.id, 'page': 1}) }}">{{ category.getName }}</a>
+            {% if category.getChildren|length %}
+                <ul>
+                    {% for child in category.children %}
+                        {{ _self.recursiveCategory(child) }}
+                    {% endfor %}
+                </ul>
             {% endif %}
-        </ul>
-    </div>
+        </li>
+    {% endmacro %}
+
+
+
     <div class="row">
         {% for product in paginator.products %}
             <div class="col-md-4">
@@ -65,13 +85,15 @@
             <a href="/1">First</a> §§
             <a href="/{{ paginator.currentPage - 1 }}">Previous</a> |
         {% endif %}
-        {% for i in range(1, paginator.allPages) %}
-            {% if paginator.currentPage == i %}
-                {{ i }}
-            {% else %}
-                <a href="/{{ i }}">{{ i }}</a>
-            {% endif %}
-        {% endfor %}
+        {% if paginator.allPages > 0 %}
+            {% for i in range(1, paginator.allPages) %}
+                {% if paginator.currentPage == i %}
+                    {{ i }}
+                {% else %}
+                    <a href="/{{ i }}">{{ i }}</a>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
         {% if paginator.hasNext %}
             <a href="/{{ paginator.currentPage + 1 }}">Next</a> §§
             <a href="/{{ paginator.allPages }}">Last</a>

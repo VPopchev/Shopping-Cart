@@ -16,7 +16,8 @@ class CategoryRepository extends \Doctrine\ORM\EntityRepository
     public function getCategoryWithProducts(){
         $em = $this->getEntityManager();
         $query = $em->createQuery('SELECT a,c FROM AppBundle:Category a
-                              LEFT JOIN a.products c');
+                              LEFT JOIN a.products c
+                              WHERE a.parent IS NULL');
         return $query->getResult();
     }
 
@@ -37,6 +38,14 @@ class CategoryRepository extends \Doctrine\ORM\EntityRepository
 
         $query->setFirstResult($offset);
         $query->setMaxResults($limit);
+        return $query->getResult();
+    }
+
+
+    public function getSubCategories(int $id){
+        $em = $this->getEntityManager();
+        $query = $em->createQuery("SELECT c FROM AppBundle:Category c
+                                        WHERE c.parent = $id");
         return $query->getResult();
     }
 }

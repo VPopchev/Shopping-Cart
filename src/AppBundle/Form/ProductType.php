@@ -50,7 +50,11 @@ class ProductType extends AbstractType
             ->add('category', EntityType::class,[
                 'class' => 'AppBundle\Entity\Category',
                 'choice_label' => function(Category $category){
-                    return $category->getName();
+                    $parentName = '';
+                    if ($category->getParent() != null){
+                        $parentName = $category->getParent()->getName() . '/';
+                    }
+                    return $parentName .$category->getName();
                 },
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'col-sm-4 control-label']
