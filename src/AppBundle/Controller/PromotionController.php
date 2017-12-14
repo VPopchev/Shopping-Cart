@@ -47,9 +47,9 @@ class PromotionController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if($promotion->getType() == 2){
+            if ($promotion->getType() == 2) {
                 $this->setPromotionToUsers($promotion);
-            } else if ($promotion->getType() == 1){
+            } else if ($promotion->getType() == 1) {
                 $this->setUsersToPromotion($promotion);
             }
             $em = $this->getDoctrine()->getManager();
@@ -75,7 +75,7 @@ class PromotionController extends Controller
     {
         $categories = $this->getDoctrine()
             ->getRepository(Category::class)
-            ->getCategoriesWithProducts();
+            ->getAllCategoriesWithProducts();
         return $this->render('promotion/view.html.twig', array(
             'promotion' => $promotion,
             'categories' => $categories
@@ -130,23 +130,24 @@ class PromotionController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('promotion_delete', array('id' => $promotion->getId())))
             ->setMethod('DELETE')
-            ->getForm()
-            ;
+            ->getForm();
     }
 
     /**
      * @param int $productId
      * @Route("promotion/choiceProducts/{id}/{categoryId}",name="product_to_promotion")
      */
-    public function choiceProducts(Promotion $promotion,$categoryId){
+    public function choiceProducts(Promotion $promotion, $categoryId)
+    {
         $category = $this->getDoctrine()
             ->getRepository(Category::class)
             ->find($categoryId);
         $products = [];
-        $this->recursion($category,$products);
-        return $this->render('promotion/addProducts.html.twig',[
+        $this->recursion($category, $products);
+        return $this->render('promotion/addProducts.html.twig', [
             'promotion' => $promotion,
             'products' => $products,
+            'category' => $category
         ]);
     }
 
@@ -155,58 +156,85 @@ class PromotionController extends Controller
      * @param int $productId
      * @Route("promotion/insertProduct/{promotionId}/{productId}", name="add_product_to_promotion")
      */
-    public function addProduct(int $promotionId,int $productId){
+    public function addProductAction(int $promotionId, int $productId)
+    {
         /** @var Promotion $promotion */
         $promotion = $this->getDoctrine()->getRepository(Promotion::class)->find($promotionId);
         /** @var Product $product */
         $product = $this->getDoctrine()->getRepository(Product::class)->find($productId);
-        $promotion->addProduct($product);
+        if(!$promotion->getProducts()->contains($product)){
+            $promotion->addProduct($product);
+        }
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($promotion);
         $em->flush();
-        if ($product->getCategory()->getParent()){
+        if ($product->getCategory()->getParent()) {
             $categoryId = $product->getCategory()->getParent()->getId();
         } else {
             $categoryId = $product->getCategory()->getId();
         }
-        return $this->redirectToRoute('product_to_promotion',[
+        return $this->redirectToRoute('product_to_promotion', [
             'id' => $promotion->getId(),
             'categoryId' => $categoryId
         ]);
     }
 
-
-    private function recursion(Category $category,&$products){
-        foreach ($category->getActiveProducts() as $activeProd){
-            array_push($products,$activeProd);
+    /**
+     * @param Promotion $promotion
+     * @param int $categoryId
+     * @Route("promotion/addCategory/{id}/{categoryId}",name="category_to_promotion")
+     */
+    public function addCategoryToPromotion(Promotion $promotion,int $categoryId){
+        $category = $this->getDoctrine()->getRepository(Category::class)
+            ->find($categoryId);
+        $products = [];
+        $this->recursion($category,$products);
+        foreach ($products as $product){
+            $promotion->addProduct($product);
         }
-        if ($category->getChildren()){
-            foreach($category->getChildren() as $child){
-                $this->recursion($child,$products);
+        $em = $this->getDoctrine()->getManager();
+        $em->merge($promotion);
+        $em->flush();
+        return $this->redirectToRoute('promotion_list');
+    }
+
+
+    private function recursion(Category $category, &$products)
+    {
+        foreach ($category->getActiveProducts() as $activeProd) {
+            array_push($products, $activeProd);
+        }
+        if ($category->getChildren()) {
+            foreach ($category->getChildren() as $child) {
+                $this->recursion($child, $products);
             }
         }
     }
 
-    public function setPromotionToUsers(Promotion $promotion){
+
+
+    public function setPromotionToUsers(Promotion $promotion)
+    {
         $users = $this->getDoctrine()->getRepository(User::class)
             ->findByCash();
         $products = $this->getDoctrine()->getRepository(Product::class)
             ->findAll();
-        foreach ($products as $product){
+        foreach ($products as $product) {
             $promotion->addProduct($product);
         }
-        foreach($users as $user){
+        foreach ($users as $user) {
             $promotion->addUser($user);
         }
         return $promotion;
     }
 
+
     private function setUsersToPromotion(Promotion $promotion)
     {
         $users = $this->getDoctrine()->getRepository(User::class)
             ->findAll();
-        foreach ($users as $user){
+        foreach ($users as $user) {
             $promotion->addUser($user);
         }
         return $promotion;

@@ -13,16 +13,25 @@ use Doctrine\ORM\Query\ResultSetMapping;
  */
 class CategoryRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function getCategoriesWithProducts(){
+    public function getMainCategoriesWithProducts(){
         $em = $this->getEntityManager();
-        $query = $em->createQuery('SELECT a,c FROM AppBundle:Category a
+        $query = $em->createQuery('SELECT a,c,p FROM AppBundle:Category a
                               LEFT JOIN a.products c
+                              LEFT JOIN c.promotions p
                               WHERE a.parent IS NULL');
         return $query->getResult();
     }
 
+    public function getAllCategoriesWithProducts(){
+        $em = $this->getEntityManager();
+        $query = $em->createQuery('SELECT a,c FROM AppBundle:Category a
+                              LEFT JOIN a.products c
+                              ORDER BY a.name ASC');
+        return $query->getResult();
+    }
 
-    public function findProductsByCategory(int $limit = 0, int $offset = 0,
+
+    public function findProductsByCategoryPaginated(int $limit = 0, int $offset = 0,
                                                         int $categoryId = -1)
     {
         $categoryFilter = '';

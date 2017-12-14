@@ -2,6 +2,8 @@
 
 {% block body %}
     <h1>Add Products to {{ promotion.name }}</h1>
+    <h4><a href="{{ path('category_to_promotion', {'categoryId': category.id, 'id': promotion.id}) }}">Add all
+            products</a></h4>
     <table class="table" border="1">
         <thead>
         <tr>

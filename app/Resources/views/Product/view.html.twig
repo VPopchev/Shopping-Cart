@@ -33,7 +33,7 @@
                             <a class="pull-right" href="{{ path('add_to_cart',{'id': product.id}) }}">Add to Cart</a>
                         {% endif %}
                     </p>
-                    <p>Category: {{ product.category == null ? 'n/a': product.category.name }}</p>
+                    <p>Category: {{ product.category.parent ? product.category.parent.name ~ '/': '' }}{{ product.category.name }}</p>
                     <small class="author">
                         Status: {{ product.isActive ? 'Active' : 'Inactive' }}<br/>
                         Quantity: {{ product.quantity }}<br/>

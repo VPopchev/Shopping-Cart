@@ -48,9 +48,6 @@
             {% endif %}
         </li>
     {% endmacro %}
-
-
-
     <div class="row">
         {% for product in paginator.products %}
             <div class="col-md-4">
@@ -66,15 +63,14 @@
                         {% if product.topPromotion(app.user) %}
                             <strike style="color: red">
                                 <b>Price: {{ product.price|number_format(2) }}лв</b></strike>.<br/>
-
                             <b>Promotion Price: {{ product.promoPrice|number_format(2) }}</b>
                         {% else %}
                             <b>Price: {{ product.price|number_format(2) }}лв.</b>
                         {% endif %}
                     </footer>
                     <small class="author">
-                        Category: {{ product.category.parent ? product.category.parent.name ~ '/': '' }}{{
-                        product.category.name }}<br/>
+                        Category: {{ product.category.parent ? product.category.parent.name ~ '/': '' }}{{ product.category.name }}
+                        <br/>
                         Quantity: {{ product.quantity }}
                     </small>
                     <footer>

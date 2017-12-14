@@ -24,6 +24,15 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
         return $query->getOneOrNullResult();
     }
 
+    public function getProduct(int $id){
+        $em = $this->getEntityManager();
+        $query = $em->createQuery('SELECT a,c,p FROM AppBundle:Product a
+                              JOIN a.category c
+                              JOIN a.promotions p
+                              WHERE a.id = ' . $id);
+        return $query->getOneOrNullResult();
+    }
+
     public function getAllWithCategories()
     {
         $em = $this->getEntityManager();

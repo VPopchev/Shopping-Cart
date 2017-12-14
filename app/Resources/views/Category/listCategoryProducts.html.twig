@@ -19,7 +19,13 @@
                     </p>
 
                     <footer style="text-align: center">
-                        <b>Price: {{ product.price|number_format(2) }}лв.</b>
+                        {% if product.topPromotion(app.user) %}
+                            <strike style="color: red">
+                                <b>Price: {{ product.price|number_format(2) }}лв</b></strike>.<br/>
+                            <b>Promotion Price: {{ product.promoPrice|number_format(2) }}</b>
+                        {% else %}
+                            <b>Price: {{ product.price|number_format(2) }}лв.</b>
+                        {% endif %}
                     </footer>
                     <small class="author">
                         Owner: {{ product.owner.username }}

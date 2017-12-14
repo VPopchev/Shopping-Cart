@@ -65,7 +65,6 @@ class ProductController extends Controller
         ) {
             return $this->redirectToRoute('homepage');
         }
-
         return $this->render('product/view.html.twig', [
             'product' => $product,
         ]);

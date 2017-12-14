@@ -9,7 +9,7 @@
                         <h2>{{ promotion.name }}</h2>
                     </header>
                     <p>
-                        {{ promotion.type == 1 ? 'Products' : 'Users' }}
+                        {{ promotion.type}}
                     </p>
                     <small class="author">
                         Start Date: {{ promotion.startDate|date }}<br/>
@@ -20,17 +20,17 @@
             </div>
             <div class="col-md-4">
                 <ul>
-                {% if promotion.type == 1 %}
-                    {% for category in categories %}
-                        <li>
-                            <a href="{{ path('product_to_promotion', {'categoryId': category.id, 'id': promotion.id}) }}">
-                                Add {{ category.name }} products to {{ promotion.name }}
-                            </a>
-                        </li>
-                    {% endfor %}
+                    {% if promotion.type == 1 %}
+                        {% for category in categories %}
+                            <li>
+                                <a href="{{ path('product_to_promotion', {'categoryId': category.id, 'id': promotion.id}) }}">
+                                    Add {{ category.parent ? category.parent.name ~ '/' ~ category.name : category.name ~ '' }} products to {{ promotion.name }}
+                                </a>
+                            </li>
+                        {% endfor %}
                     {% else %}
-                    <li><a href="">Add users to "{{ promotion.name }}"</a></li>
-                {% endif %}
+                        <li><a href="#">Add users to "{{ promotion.name }}"</a></li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
