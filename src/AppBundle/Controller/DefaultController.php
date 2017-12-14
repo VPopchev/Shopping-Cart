@@ -21,7 +21,7 @@ class DefaultController extends Controller
         $categories = $this
             ->getDoctrine()
             ->getRepository(Category::class)
-            ->getCategoryWithProducts();
+            ->getCategoriesWithProducts();
 
         $offset = ($page - 1) * self::PRODUCTS_LIMIT;
         $products = $repo->findAllPerPage(self::PRODUCTS_LIMIT,$offset);

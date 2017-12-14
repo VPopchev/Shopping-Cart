@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Add Products to {{ promotion.name }}</h1>
+    <table class="table" border="1">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Owner</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+            <tr {{ product in promotion.products ? 'bgcolor="lightgreen"' : '' }}>
+                <td>{{ product.name }}</td>
+                <td>{{ product.getSummary }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.owner.username }}</td>
+                <td><a href="{{ path('add_product_to_promotion', {'promotionId': promotion.id,'productId': product.id}) }}">-> Add</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+

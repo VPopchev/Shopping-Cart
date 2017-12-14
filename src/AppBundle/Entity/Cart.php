@@ -70,11 +70,19 @@ class Cart
     }
 
 
-    public function getTotal()
+    public function getTotal(User $user)
     {
         $sum = 0;
         foreach ($this->products as $product) {
-            $sum += $product->getPrice();
+            if ($product->getTopPromotion($user)) {
+                $productPrice = $product->getPrice();
+                $discount = $product->getTopPromotion($user)->getDiscount();
+                $promotionPrice = $productPrice - ($productPrice / 100.0) * $discount;
+
+                $sum += $promotionPrice;
+            } else {
+                $sum += $product->getPrice();
+            }
         }
         return $sum;
     }

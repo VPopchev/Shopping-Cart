@@ -13,7 +13,7 @@ use Doctrine\ORM\Query\ResultSetMapping;
  */
 class CategoryRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function getCategoryWithProducts(){
+    public function getCategoriesWithProducts(){
         $em = $this->getEntityManager();
         $query = $em->createQuery('SELECT a,c FROM AppBundle:Category a
                               LEFT JOIN a.products c

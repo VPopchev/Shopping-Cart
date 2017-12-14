@@ -10,4 +10,10 @@ namespace AppBundle\Repository;
  */
 class UserRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findByCash(){
+        $em = $this->getEntityManager();
+        $query = $em->createQuery('SELECT u FROM AppBundle:User u 
+                                       WHERE u.cash > 1500');
+        return $query->getResult();
+    }
 }

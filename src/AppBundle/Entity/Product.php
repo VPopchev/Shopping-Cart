@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Entity;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -93,6 +94,14 @@ class Product
      * @Assert\File(mimeTypes={"image/jpeg"},maxSize="5500k")
      */
     private $image;
+
+    /**
+     * @var Promotion[]|ArrayCollection
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Promotion",mappedBy="products")
+     */
+    private $promotions;
+
+    private $promoPrice;
 
     /**
      * @return mixed
@@ -268,5 +277,71 @@ class Product
     public function getSummary(){
         return substr($this->description,0,50) . '...';
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPromotions()
+    {
+        return $this->promotions;
+    }
+
+    /**
+     * @param mixed $promotions
+     */
+    public function setPromotions($promotions)
+    {
+        $this->promotions = $promotions;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPromoPrice()
+    {
+        return $this->promoPrice;
+    }
+
+    /**
+     * @param mixed $promoPrice
+     */
+    public function setPromoPrice(int $discount){
+        $basePrice = $this->getPrice();
+        $promoPrice = $basePrice - ($basePrice / 100.0) * $discount;
+        $this->promoPrice = $promoPrice;
+    }
+
+    public function getTopPromotion(User $user = null)
+    {
+        /** @var ArrayCollection $promotions */
+        $promotions = $this->getPromotions();
+
+        if (null != $user) {
+            $promotions = $promotions->filter(function (Promotion $p) use ($user) {
+                return ($p->getUsers()->contains($user));
+            });
+            $promotions = $promotions->filter(function (Promotion $p){
+                $currDate = new \DateTime('NOW');
+                return ($currDate >= $p->getStartDate() and $currDate <= $p->getEndDate() ? 1 : 0);
+            });
+        }  else {
+            $promotions = $promotions->filter(function (Promotion $p){
+                $currDate = new \DateTime('NOW');
+                return ($currDate >= $p->getStartDate() and $currDate <= $p->getEndDate() and $p->getType() == 1 ? 1 :0);
+            });
+        }
+        $iterator = $promotions->getIterator();
+        $iterator->uasort(function (Promotion $a,Promotion $b) {
+            return ($a->getDiscount() < $b->getDiscount()) ? 1 : -1;
+        });
+        $collection = new ArrayCollection(iterator_to_array($iterator));
+        $promotion = $collection->first();
+        if(is_object($promotion)) {
+            $this->setPromoPrice($promotion->getDiscount());
+            return $promotion;
+        }
+        return null;
+    }
+
 }
 

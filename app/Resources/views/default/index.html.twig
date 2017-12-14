@@ -11,21 +11,21 @@
                 <div class="dropdown-menu">
                     {{ _self.recursiveCategory(category) }}
                 </div>
-                {#<li><a href="{{ path('category_products_list',{'id':category.id}) }}">{{ category.name }}</a></li>#}
             </div>
         {% endfor %}
 
     </div>
     {% if app.user and (app.user.isAdmin() or app.user.isEditor()) %}
-        <li><a href="{{ path('manage_categories') }}">Manage Categories</a></li>
+        <a href="{{ path('manage_categories') }}">Manage Categories</a>
+        <a href="{{ path('promotion_list') }}">Manage Promotions</a>
     {% endif %}
-
 
     {% if app.user %}
         <h1>Hello, {{ app.user.firstName }}!</h1>
     {% else %}
         <h1>Hello Guest!</h1>
     {% endif %}
+
     {% for msg in app.session.flashBag.get('error') %}
         <div class="alert alert-danger">
             <h3>{{ msg }}</h3>
@@ -36,7 +36,6 @@
             <h3>{{ msg }}</h3>
         </div>
     {% endfor %}
-
     {% macro recursiveCategory(category) %}
         <li>
             <a href="{{ path('category_products_list', {'id': category.id, 'page': 1}) }}">{{ category.getName }}</a>
@@ -64,10 +63,18 @@
                         {{ product.getSummary }}
                     </p>
                     <footer style="text-align: center">
-                        <b>Price: {{ product.price|number_format(2) }}лв.</b>
+                        {% if product.topPromotion(app.user) %}
+                            <strike style="color: red">
+                                <b>Price: {{ product.price|number_format(2) }}лв</b></strike>.<br/>
+
+                            <b>Promotion Price: {{ product.promoPrice|number_format(2) }}</b>
+                        {% else %}
+                            <b>Price: {{ product.price|number_format(2) }}лв.</b>
+                        {% endif %}
                     </footer>
                     <small class="author">
-                        Category: {{ product.category.name }}<br/>
+                        Category: {{ product.category.parent ? product.category.parent.name ~ '/': '' }}{{
+                        product.category.name }}<br/>
                         Quantity: {{ product.quantity }}
                     </small>
                     <footer>

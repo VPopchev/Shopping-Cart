@@ -85,7 +85,7 @@ class CartController extends Controller
             $product->setOwner($user);
             $em->merge($productOwner);
         }
-        $user->decreaseCash($userCart->getTotal());
+        $user->decreaseCash($userCart->getTotal($user));
         $this->clearCart();
         $em->merge($user);
         $em->flush();

@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <article class="col-md-12">
+                    <header>
+                        <h2>{{ promotion.name }}</h2>
+                    </header>
+                    <p>
+                        {{ promotion.type == 1 ? 'Products' : 'Users' }}
+                    </p>
+                    <small class="author">
+                        Start Date: {{ promotion.startDate|date }}<br/>
+                        End Date: {{ promotion.endDate|date }}<br/>
+                    </small>
+                    <hr>
+                </article>
+            </div>
+            <div class="col-md-4">
+                <ul>
+                {% if promotion.type == 1 %}
+                    {% for category in categories %}
+                        <li>
+                            <a href="{{ path('product_to_promotion', {'categoryId': category.id, 'id': promotion.id}) }}">
+                                Add {{ category.name }} products to {{ promotion.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    {% else %}
+                    <li><a href="">Add users to "{{ promotion.name }}"</a></li>
+                {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <ul>
+        <li>
+            <a href="{{ path('promotion_list') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('promotion_edit', { 'id': promotion.id }) }}">Edit</a>
+        </li>
+    </ul>
+
+{% endblock %}

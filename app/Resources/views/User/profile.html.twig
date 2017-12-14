@@ -48,17 +48,21 @@
                 <tr class="table-hover">
                     <td><a href="{{ path('remove_from_cart',{'id':product.id}) }}">X</a>{{ product.name }}</td>
                     <td>{{ product.description }}</td>
-                    <td>{{ product.price|number_format(2) }}</td>
+                    {% if product.topPromotion(app.user) %}
+                        <td>{{ product.promoPrice|number_format(2) }}</td>
+                    {% else %}
+                        <td>{{ product.price|number_format(2) }}</td>
+                    {% endif %}
                 </tr>
             {% endfor %}
             <tr>
                 <td></td>
                 <td></td>
-                <td>Total: {{ user.cart.getTotal()|number_format(2) }}</td>
+                <td>Total: {{ user.cart.getTotal(app.user)|number_format(2) }}</td>
             </tr>
             </tbody>
         </table>
-        {% if user.cash >= user.cart.getTotal() %}
+        {% if user.cash >= user.cart.getTotal(app.user) %}
             <div class="pull-right">
                 <a href="{{ path('cash_out_cart') }}">Cash Out Cart</a>
             </div>

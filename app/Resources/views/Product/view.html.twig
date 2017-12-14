@@ -23,7 +23,12 @@
                     </p>
 
                     <p class="pull-right">
-                        Цена: {{ product.price|number_format(2) }}лв.
+                        {% if product.topPromotion(app.user) %}
+                            <b><strike>Price: {{ product.price|number_format(2) }}</strike>лв.</b><br/>
+                            <b>Promotion Price: {{ product.promoPrice|number_format(2)}}</b>
+                        {% else %}
+                            <b>Price: {{ product.price|number_format(2) }}лв.</b>
+                        {% endif %}
                         {% if (app.user != null and product.owner.id != app.user.id) %} <br/>
                             <a class="pull-right" href="{{ path('add_to_cart',{'id': product.id}) }}">Add to Cart</a>
                         {% endif %}
