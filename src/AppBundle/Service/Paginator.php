@@ -36,8 +36,6 @@ class Paginator
      * @param \Generator|Product[] $products
      * @param int $currentPage
      * @param int $allPages
-     * @param bool $hasPrevious
-     * @param bool $hasNext
      */
     public function __construct($currentPage,$allPages,$products)
     {

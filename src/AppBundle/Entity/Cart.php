@@ -32,10 +32,7 @@ class Cart
      */
     private $products;
 
-    /**
-     * Cart constructor.
-     * @param Product[]|ArrayCollection $products
-     */
+
     public function __construct()
     {
         $this->products = [];
@@ -62,7 +59,7 @@ class Cart
     }
 
     /**
-     * @param Product[]|ArrayCollection $products
+     * @param Product $product
      */
     public function addProduct(Product $product)
     {

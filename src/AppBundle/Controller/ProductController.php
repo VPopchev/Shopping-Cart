@@ -3,11 +3,9 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Product;
-use AppBundle\Entity\Category;
 use AppBundle\Entity\User;
 use AppBundle\Form\ProductType;
 use AppBundle\Service\FileUploader;
-use AppBundle\Service\Paginator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -53,6 +51,8 @@ class ProductController extends Controller
 
     /**
      * @Route("product/view/{id}",name="view_product")
+     * @param Product $product
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function viewAction(Product $product)
     {
@@ -74,7 +74,9 @@ class ProductController extends Controller
     /**
      * @Route("product/edit/{id}",name="edit_product")
      * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
-     *
+     * @param Product $product
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function editAction(Product $product, Request $request)
     {
@@ -109,6 +111,9 @@ class ProductController extends Controller
     /**
      * @Route("product/delete/{id}",name="delete_product")
      * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
+     * @param Product $product
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function deleteAction(Product $product, Request $request)
     {

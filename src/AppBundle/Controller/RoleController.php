@@ -6,7 +6,6 @@ use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -18,6 +17,8 @@ class RoleController extends Controller
      * @Route("user/roleChange/{id}",name="edit_roles")
      * @Method("GET")
      * @Security("has_role('ROLE_ADMIN')")
+     * @param User $user
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function editRoles(User $user){
         $form = $this->createForm(UserType::class,$user);
@@ -31,6 +32,9 @@ class RoleController extends Controller
      * @Route("user/roleChange/{id}",name="edit_roles_action")
      * @Method("POST")
      * @Security("has_role('ROLE_ADMIN')")
+     * @param User $user
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function editRolesAction(User $user,Request $request){
         $form = $this->createForm(UserType::class,$user);

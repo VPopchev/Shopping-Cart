@@ -23,6 +23,7 @@ class CategoryType extends AbstractType
             'choice_label' => function(Category $category){
                 $parentName = '';
                 if ($category->getParent() != null){
+                    /** @var Category $parentName */
                     $parentName = $category->getParent()->getName() . '/';
                 }
                 return $parentName .$category->getName();

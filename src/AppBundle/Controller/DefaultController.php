@@ -7,13 +7,15 @@ use AppBundle\Entity\Category;
 use AppBundle\Service\Paginator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
 {
     const PRODUCTS_LIMIT = 6;
+
     /**
      * @Route("/{page}", name="homepage")
+     * @param int $page
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function indexAction(int $page = 1)
     {

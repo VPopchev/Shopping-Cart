@@ -39,6 +39,8 @@ class PromotionController extends Controller
      *
      * @Route("promotion/new", name="promotion_new")
      * @Method({"GET", "POST"})
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function newAction(Request $request)
     {
@@ -70,6 +72,8 @@ class PromotionController extends Controller
      *
      * @Route("promotion/view/{id}", name="promotion_show")
      * @Method("GET")
+     * @param Promotion $promotion
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function showAction(Promotion $promotion)
     {
@@ -84,6 +88,9 @@ class PromotionController extends Controller
 
     /**
      * @Route("promotion/edit/{id}", name="promotion_edit")
+     * @param Request $request
+     * @param Promotion $promotion
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function editAction(Request $request, Promotion $promotion)
     {
@@ -102,59 +109,12 @@ class PromotionController extends Controller
         ));
     }
 
-    /**
-     * Deletes a promotion entity.
-     *
-     * @Route("/promotion/delete/{id}", name="promotion_delete")
-     * @Method("DELETE")
-     */
-    public function deleteAction(Request $request, Promotion $promotion)
-    {
-        $form = $this->createDeleteForm($promotion);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($promotion);
-            $em->flush();
-        }
-
-        return $this->redirectToRoute('promotion_list');
-    }
-
-    /**
-     * @param Promotion $promotion
-     */
-    private function createDeleteForm(Promotion $promotion)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('promotion_delete', array('id' => $promotion->getId())))
-            ->setMethod('DELETE')
-            ->getForm();
-    }
-
-    /**
-     * @param int $productId
-     * @Route("promotion/choiceProducts/{id}/{categoryId}",name="product_to_promotion")
-     */
-    public function choiceProducts(Promotion $promotion, $categoryId)
-    {
-        $category = $this->getDoctrine()
-            ->getRepository(Category::class)
-            ->find($categoryId);
-        $products = [];
-        $this->recursion($category, $products);
-        return $this->render('promotion/addProducts.html.twig', [
-            'promotion' => $promotion,
-            'products' => $products,
-            'category' => $category
-        ]);
-    }
 
     /**
      * @param int $promotionId
      * @param int $productId
      * @Route("promotion/insertProduct/{promotionId}/{productId}", name="add_product_to_promotion")
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function addProductAction(int $promotionId, int $productId)
     {
@@ -184,6 +144,7 @@ class PromotionController extends Controller
      * @param Promotion $promotion
      * @param int $categoryId
      * @Route("promotion/addCategory/{id}/{categoryId}",name="category_to_promotion")
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function addCategoryToPromotion(Promotion $promotion,int $categoryId){
         $category = $this->getDoctrine()->getRepository(Category::class)
@@ -197,6 +158,27 @@ class PromotionController extends Controller
         $em->merge($promotion);
         $em->flush();
         return $this->redirectToRoute('promotion_list');
+    }
+
+    /**
+     *
+     * @Route("promotion/choiceProducts/{id}/{categoryId}",name="product_to_promotion")
+     * @param Promotion $promotion
+     * @param $categoryId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function choiceProducts(Promotion $promotion, $categoryId)
+    {
+        $category = $this->getDoctrine()
+            ->getRepository(Category::class)
+            ->find($categoryId);
+        $products = [];
+        $this->recursion($category, $products);
+        return $this->render('promotion/addProducts.html.twig', [
+            'promotion' => $promotion,
+            'products' => $products,
+            'category' => $category
+        ]);
     }
 
 

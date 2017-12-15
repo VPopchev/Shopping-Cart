@@ -8,7 +8,6 @@ use AppBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 
 
 class CartController extends Controller
@@ -16,8 +15,10 @@ class CartController extends Controller
     /**
      * @Route("product/add/{id}",name="add_to_cart")
      * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
+     * @param Product $product
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function addAction(Product $product, Request $request)
+    public function addAction(Product $product)
     {
         /** @var Cart $userCart */
         $userCart = $this->getUser()->getCart();

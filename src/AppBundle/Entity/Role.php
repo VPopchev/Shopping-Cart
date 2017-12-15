@@ -5,7 +5,6 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
-use Symfony\Component\Security\Core\Role\RoleInterface;
 
 /**
  * Role
@@ -95,14 +94,8 @@ class Role implements RoleHierarchyInterface
     }
 
     /**
-     * Returns an array of all reachable roles by the given ones.
-     *
-     * Reachable roles are the roles directly assigned but also all roles that
-     * are transitively reachable from them in the role hierarchy.
-     *
-     * @param RoleInterface[] $roles An array of directly assigned roles
-     *
-     * @return RoleInterface[] An array of all reachable roles
+     * @param array $roles
+     * @return \Symfony\Component\Security\Core\Role\RoleInterface[]|void
      */
     public function getReachableRoles(array $roles)
     {

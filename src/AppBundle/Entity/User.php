@@ -134,10 +134,7 @@ class User implements UserInterface
 
 
 
-    /**
-     * User constructor.
-     * @param ArrayCollection $products
-     */
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -350,20 +347,7 @@ class User implements UserInterface
     }
 
     /**
-     * Returns the roles granted to the user.
-     *
-     * <code>
-     * public function getRoles()
-     * {
-     *     return array('ROLE_USER');
-     * }
-     * </code>
-     *
-     * Alternatively, the roles might be stored on a ``roles`` property,
-     * and populated in any number of different ways when the user object
-     * is created.
-     *
-     * @return (Role|string)[] The user roles
+     * @return Role[]|ArrayCollection
      */
     public function getRoles()
     {

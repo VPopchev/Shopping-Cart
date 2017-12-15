@@ -303,7 +303,8 @@ class Product
     }
 
     /**
-     * @param mixed $promoPrice
+     * @param int $discount
+     * @internal param mixed $promoPrice
      */
     public function setPromoPrice(int $discount){
         $basePrice = $this->getPrice();

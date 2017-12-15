@@ -7,7 +7,6 @@ use AppBundle\Entity\Category;
 use AppBundle\Entity\User;
 use AppBundle\Form\CategoryType;
 use AppBundle\Service\Paginator;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -21,6 +20,8 @@ class CategoryController extends Controller
     /**
      * @Route("category/manage",name="manage_categories")
      * @Security("has_role('ROLE_EDITOR')")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function manageCategory(Request $request)
     {
@@ -40,6 +41,9 @@ class CategoryController extends Controller
 
     /**
      * @Route("category/list/{id}/{page}",name="category_products_list")
+     * @param Category $category
+     * @param int $page
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function listCategoryProductsAction(Category $category,int $page = 1)
     {
@@ -73,6 +77,8 @@ class CategoryController extends Controller
     /**
      * @Route("category/remove/{id}",name="remove_category")
      * @Security("has_role('ROLE_EDITOR')")
+     * @param Category $category
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function deleteCategory(Category $category)
     {
