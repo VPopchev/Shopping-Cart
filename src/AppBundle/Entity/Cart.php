@@ -84,7 +84,7 @@ class Cart
         return $sum;
     }
 
-    public function clearCart()
+    public function clear()
     {
         $this->products = [];
     }

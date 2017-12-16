@@ -9,11 +9,28 @@ namespace AppBundle\Repository;
  * repository methods below.
  */
 
+use AppBundle\Entity\Product;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ProductRepository extends \Doctrine\ORM\EntityRepository
 {
 
+    public function __construct(EntityManager $em)
+    {
+        parent::__construct($em, new Mapping\ClassMetadata(Product::class));
+    }
+
+
+
+    public function findAllActive(){
+        $em = $this->getEntityManager();
+        $query = $em->createQuery('SELECT p,c FROM AppBundle:Product p
+                              JOIN p.category c
+                              WHERE p.isActive = 1');
+        return $query->getResult();
+    }
 
     public function getProductWithCategory(int $id)
     {

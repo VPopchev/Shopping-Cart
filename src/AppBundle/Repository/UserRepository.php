@@ -1,6 +1,9 @@
 <?php
 
 namespace AppBundle\Repository;
+use AppBundle\Entity\User;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping;
 
 /**
  * UserRepository
@@ -10,7 +13,12 @@ namespace AppBundle\Repository;
  */
 class UserRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function findByCash(){
+    public function __construct(EntityManager $em)
+    {
+        parent::__construct($em, new Mapping\ClassMetadata(User::class));
+    }
+
+    public function findRichUsers(){
         $em = $this->getEntityManager();
         $query = $em->createQuery('SELECT u FROM AppBundle:User u 
                                        WHERE u.cash > 1500');

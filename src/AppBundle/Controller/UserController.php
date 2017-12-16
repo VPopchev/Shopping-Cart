@@ -2,10 +2,10 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Cart;
-use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
+use AppBundle\Service\PromotionServiceInterface;
+use AppBundle\Service\UserServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -13,6 +13,25 @@ use Symfony\Component\HttpFoundation\Request;
 
 class UserController extends Controller
 {
+
+    /**
+     * @var UserServiceInterface
+     */
+    private $userService;
+
+    /**
+     * @var PromotionServiceInterface
+     */
+    private $promotionService;
+
+
+    public function __construct(UserServiceInterface $userService,
+                                PromotionServiceInterface $promotionService)
+    {
+        $this->userService = $userService;
+        $this->promotionService = $promotionService;
+    }
+
 
     /**
      * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
@@ -30,6 +49,8 @@ class UserController extends Controller
 
     /**
      * @Route("user/register", name="register_action")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function registerAction(Request $request)
     {
@@ -39,7 +60,8 @@ class UserController extends Controller
         $user->setCash(1500);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->saveUser($user);
+            $this->userService->register($user);
+            $this->promotionService->addUserToPromotions($user);
             return $this->redirectToRoute('security_login');
         }
         $errors = $form->getErrors(true);
@@ -49,37 +71,14 @@ class UserController extends Controller
         ]);
     }
 
-    private function saveUser(User $user)
-    {
-        $password = $this->get('security.password_encoder')
-                         ->encodePassword($user, $user->getPassword());
-        $user->setPassword($password);
-
-        $roleRepository = $this->getDoctrine()->getRepository(Role::class);
-        $userRole = $roleRepository->findOneBy(['name' => 'ROLE_USER']);
-        $user->addRole($userRole);
-        $user->setCart($this->createCart());
-        $em = $this->getDoctrine()->getManager();
-
-        $em->persist($user);
-        $em->flush();
-    }
-
     /**
      * @Route("user/userProfileView/{id}",name="view_user_profile")
+     * @param User $user
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function viewUserProfile(User $user)
     {
         return $this->render('user/userProfileView.html.twig',
             ['user' => $user]);
-    }
-
-    private function createCart()
-    {
-        $cart = new Cart();
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($cart);
-        $em->flush();
-        return $cart;
     }
 }

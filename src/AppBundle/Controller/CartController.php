@@ -5,20 +5,48 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Cart;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
+use AppBundle\Service\CartServiceInterface;
+use AppBundle\Service\PromotionServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 
 class CartController extends Controller
 {
+
+    /**
+     * @var CartServiceInterface
+     */
+    private $cartService;
+
+    /**
+     * @var PromotionServiceInterface
+     */
+    private $promotionService;
+
+    /**
+     * CartController constructor.
+     * @param CartServiceInterface $cartService
+     * @param PromotionServiceInterface $promotionService
+     */
+    public function __construct(CartServiceInterface $cartService,
+                                PromotionServiceInterface $promotionService)
+    {
+        $this->cartService = $cartService;
+        $this->promotionService = $promotionService;
+    }
+
+
     /**
      * @Route("product/add/{id}",name="add_to_cart")
      * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      * @param Product $product
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function addAction(Product $product)
+    public function addAction(Product $product,Request $request)
     {
         /** @var Cart $userCart */
         $userCart = $this->getUser()->getCart();
@@ -28,8 +56,9 @@ class CartController extends Controller
                 ['product' => $product, 'id' => $product->getId()]);
         }
         $em = $this->getDoctrine()->getManager();
+        $quantity = $request->request->get('quantity');
+        $product->setQuantity($quantity);
         $userCart->addProduct($product);
-
         $em->persist($userCart);
         $em->flush();
         $this->addFlash('success', "{$product->getName()} added to cart successfully!");
@@ -41,6 +70,8 @@ class CartController extends Controller
     /**
      * @Route("product/remove/{id}",name="remove_from_cart")
      * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
+     * @param Product $product
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function removeAction(Product $product)
     {
@@ -61,7 +92,7 @@ class CartController extends Controller
     {
         /** @var Cart $userCart */
         $userCart = $this->getUser()->getCart();
-        $userCart->clearCart();
+        $userCart->clear();
         $em = $this->getDoctrine()->getManager();
         $em->merge($userCart);
         $em->flush();
@@ -77,19 +108,8 @@ class CartController extends Controller
     {
         /** @var User $user */
         $user = $this->getUser();
-        /** @var Cart $userCart */
-        $userCart = $user->getCart();
-        $em = $this->getDoctrine()->getManager();
-        foreach ($userCart->getProducts() as $product) {
-            $productOwner = $product->getOwner();
-            $productOwner->setCash($product->getPrice());
-            $product->setOwner($user);
-            $em->merge($productOwner);
-        }
-        $user->decreaseCash($userCart->getTotal($user));
-        $this->clearCart();
-        $em->merge($user);
-        $em->flush();
+        $this->cartService->cashOut($user);
+        $this->promotionService->updateUserPromotions();
         $this->addFlash('success', "CashOut successful");
         return $this->redirectToRoute('user_profile');
     }

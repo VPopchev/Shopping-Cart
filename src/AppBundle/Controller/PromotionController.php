@@ -7,6 +7,7 @@ use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
 use AppBundle\Form\PromotionType;
+use AppBundle\Service\PromotionServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,10 +17,22 @@ class PromotionController extends Controller
 {
     const PRODUCTS_LIMIT = 6;
 
+    /**
+     * @var PromotionServiceInterface
+     */
+    private $promotionService;
 
     /**
-     * Lists all promotion entities.
-     *
+     * PromotionController constructor.
+     * @param PromotionServiceInterface $promotionService
+     */
+    public function __construct(PromotionServiceInterface $promotionService)
+    {
+        $this->promotionService = $promotionService;
+    }
+
+
+    /**
      * @Route("/promotions/list", name="promotion_list")
      * @Method("GET")
      */
@@ -50,9 +63,9 @@ class PromotionController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($promotion->getType() == 2) {
-                $this->setPromotionToUsers($promotion);
+                $this->promotionService->setRichUsersToPromo($promotion);
             } else if ($promotion->getType() == 1) {
-                $this->setUsersToPromotion($promotion);
+                $this->promotionService->setAllUsersToPromo($promotion);
             }
             $em = $this->getDoctrine()->getManager();
             $em->persist($promotion);
@@ -68,8 +81,6 @@ class PromotionController extends Controller
     }
 
     /**
-     * Finds and displays a promotion entity.
-     *
      * @Route("promotion/view/{id}", name="promotion_show")
      * @Method("GET")
      * @param Promotion $promotion
@@ -125,7 +136,6 @@ class PromotionController extends Controller
         if(!$promotion->getProducts()->contains($product)){
             $promotion->addProduct($product);
         }
-
         $em = $this->getDoctrine()->getManager();
         $em->persist($promotion);
         $em->flush();
@@ -146,11 +156,11 @@ class PromotionController extends Controller
      * @Route("promotion/addCategory/{id}/{categoryId}",name="category_to_promotion")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function addCategoryToPromotion(Promotion $promotion,int $categoryId){
+    public function categoryToPromoAction(Promotion $promotion, int $categoryId){
         $category = $this->getDoctrine()->getRepository(Category::class)
             ->find($categoryId);
         $products = [];
-        $this->recursion($category,$products);
+        $this->findProductsRecursive($category,$products);
         foreach ($products as $product){
             $promotion->addProduct($product);
         }
@@ -173,7 +183,7 @@ class PromotionController extends Controller
             ->getRepository(Category::class)
             ->find($categoryId);
         $products = [];
-        $this->recursion($category, $products);
+        $this->findProductsRecursive($category, $products);
         return $this->render('promotion/addProducts.html.twig', [
             'promotion' => $promotion,
             'products' => $products,
@@ -182,43 +192,16 @@ class PromotionController extends Controller
     }
 
 
-    private function recursion(Category $category, &$products)
+    private function findProductsRecursive(Category $category, &$products)
     {
         foreach ($category->getActiveProducts() as $activeProd) {
             array_push($products, $activeProd);
         }
         if ($category->getChildren()) {
             foreach ($category->getChildren() as $child) {
-                $this->recursion($child, $products);
+                $this->findProductsRecursive($child, $products);
             }
         }
     }
 
-
-
-    public function setPromotionToUsers(Promotion $promotion)
-    {
-        $users = $this->getDoctrine()->getRepository(User::class)
-            ->findByCash();
-        $products = $this->getDoctrine()->getRepository(Product::class)
-            ->findAll();
-        foreach ($products as $product) {
-            $promotion->addProduct($product);
-        }
-        foreach ($users as $user) {
-            $promotion->addUser($user);
-        }
-        return $promotion;
-    }
-
-
-    private function setUsersToPromotion(Promotion $promotion)
-    {
-        $users = $this->getDoctrine()->getRepository(User::class)
-            ->findAll();
-        foreach ($users as $user) {
-            $promotion->addUser($user);
-        }
-        return $promotion;
-    }
 }

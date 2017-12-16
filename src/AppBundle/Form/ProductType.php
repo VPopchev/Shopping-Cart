@@ -63,6 +63,7 @@ class ProductType extends AbstractType
                 'label_attr' => ['class' => 'col-sm-4 control-label']
             ])
         ->add('image',FileType::class,[
+            'data_class' => null,
             'required' => false,
             'label' => 'Product Image',
             'label_attr' => ['class' => 'col-sm-4 control-label'],

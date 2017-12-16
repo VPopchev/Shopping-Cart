@@ -360,10 +360,9 @@ class User implements UserInterface
     }
 
     /**
-     * @param Role $role
      * @return User
      */
-    public function addRole(Role $role){
+    public function addRole($role){
         $this->roles[] = $role;
         return $this;
     }

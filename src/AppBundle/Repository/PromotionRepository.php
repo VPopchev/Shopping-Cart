@@ -1,6 +1,9 @@
 <?php
 
 namespace AppBundle\Repository;
+use AppBundle\Entity\Promotion;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping;
 
 /**
  * PromotionRepository
@@ -10,4 +13,22 @@ namespace AppBundle\Repository;
  */
 class PromotionRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function __construct(EntityManager $em)
+    {
+        parent::__construct($em, new Mapping\ClassMetadata(Promotion::class));
+    }
+
+    public function findProductTypePromotions(){
+        $em = $this->getEntityManager();
+        $query = $em->createQuery('SELECT p FROM AppBundle:Promotion p 
+                                        WHERE p.type = 1');
+        return $query->getResult();
+    }
+
+    public function findUserTypePromotions(){
+        $em = $this->getEntityManager();
+        $query = $em->createQuery('SELECT p FROM AppBundle:Promotion p 
+                                        WHERE p.type = 2');
+        return $query->getResult();
+    }
 }

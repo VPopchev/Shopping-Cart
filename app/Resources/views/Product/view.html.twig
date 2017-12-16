@@ -29,9 +29,6 @@
                         {% else %}
                             <b>Price: {{ product.price|number_format(2) }}лв.</b>
                         {% endif %}
-                        {% if (app.user != null and product.owner.id != app.user.id) %} <br/>
-                            <a class="pull-right" href="{{ path('add_to_cart',{'id': product.id}) }}">Add to Cart</a>
-                        {% endif %}
                     </p>
                     <p>Category: {{ product.category.parent ? product.category.parent.name ~ '/': '' }}{{ product.category.name }}</p>
                     <small class="author">
@@ -50,6 +47,12 @@
                             <div class="pull-right">
                                 <a href="{{ path('delete_product',{'id': product.id}) }}">Delete Product</a>
                             </div>
+                        {% endif %}
+                        {% if (app.user != null and product.owner.id != app.user.id) %} <br/>
+                        <form action="{{ path('add_to_cart', {'id': product.id}) }}" method="post">
+                            Quantity <input class="form-control" type="number" name="quantity" min="0" max="{{ product.quantity}}" />
+                            <button type="submit">Add To Cart</button>
+                        </form>
                         {% endif %}
                     </footer>
                 </article>
