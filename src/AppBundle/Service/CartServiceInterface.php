@@ -14,4 +14,6 @@ use AppBundle\Entity\User;
 interface CartServiceInterface
 {
     public function cashOut(User $user);
+
+    public function clearCart(User $user);
 }

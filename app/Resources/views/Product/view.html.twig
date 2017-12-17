@@ -30,7 +30,9 @@
                             <b>Price: {{ product.price|number_format(2) }}лв.</b>
                         {% endif %}
                     </p>
-                    <p>Category: {{ product.category.parent ? product.category.parent.name ~ '/': '' }}{{ product.category.name }}</p>
+                    {% if product.category %}
+                        <p>Category: {{ product.category.parent ? product.category.parent.name ~ '/': '' }}{{ product.category.name }}</p>
+                    {% endif %}
                     <small class="author">
                         Status: {{ product.isActive ? 'Active' : 'Inactive' }}<br/>
                         Quantity: {{ product.quantity }}<br/>

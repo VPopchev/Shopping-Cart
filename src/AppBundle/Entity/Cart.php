@@ -25,17 +25,15 @@ class Cart
 
     /**
      * @var Product[]|ArrayCollection
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Product")
-     * @ORM\JoinTable(name="products_carts",
-     *     joinColumns={@ORM\JoinColumn(name="cart_id",referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="product_id",referencedColumnName="id",onDelete="CASCADE")})
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Shipper",mappedBy="cart")
+     *
      */
-    private $products;
+    private $shipper;
 
 
     public function __construct()
     {
-        $this->products = [];
+        $this->shipper = [];
     }
 
 
@@ -53,9 +51,9 @@ class Cart
     /**
      * @return ArrayCollection|Product[]
      */
-    public function getProducts()
+    public function getShipper()
     {
-        return $this->products;
+        return $this->shipper;
     }
 
     /**
@@ -63,22 +61,22 @@ class Cart
      */
     public function addProduct(Product $product)
     {
-        $this->products[] = $product;
+        $this->shipper[] = $product;
     }
 
 
     public function getTotal(User $user)
     {
         $sum = 0;
-        foreach ($this->products as $product) {
-            if ($product->getTopPromotion($user)) {
-                $productPrice = $product->getPrice();
-                $discount = $product->getTopPromotion($user)->getDiscount();
+        foreach ($this->shipper as $shipper) {
+            if ($shipper->getProduct()->getTopPromotion($user)) {
+                $productPrice = $shipper->getProduct()->getPrice();
+                $discount = $shipper->getProduct()->getTopPromotion($user)->getDiscount();
                 $promotionPrice = $productPrice - ($productPrice / 100.0) * $discount;
 
-                $sum += $promotionPrice;
+                $sum += $promotionPrice * $shipper->getQuantity();
             } else {
-                $sum += $product->getPrice();
+                $sum += $shipper->getProduct()->getPrice() * $shipper->getQuantity();
             }
         }
         return $sum;
@@ -86,7 +84,7 @@ class Cart
 
     public function clear()
     {
-        $this->products = [];
+        $this->shipper = new ArrayCollection();
     }
 }
 

@@ -55,10 +55,9 @@ class ProductController extends Controller
     /**
      * @Route("product/view/{id}",name="view_product")
      * @param Product $product
-     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function viewAction(Product $product,Request $request)
+    public function viewAction(Product $product)
     {
         /** @var User $currentUser */
         $currentUser = $this->getUser();

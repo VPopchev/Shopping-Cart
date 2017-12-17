@@ -71,7 +71,7 @@ class Product
     /**
      * @var Category
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Category"), inversedBy="products")
-     * @ORM\JoinColumn(name="categoryId",referencedColumnName="id",onDelete="SET NULL")
+     * @ORM\JoinColumn(name="categoryId",referencedColumnName="id",onDelete="SET NULL",nullable=true)
      */
     private $category;
 
@@ -102,6 +102,11 @@ class Product
     private $promotions;
 
     private $promoPrice;
+
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Shipper",mappedBy="product")
+     */
+    private $cartProducts;
 
     /**
      * @return mixed
@@ -156,9 +161,9 @@ class Product
 
     /**
      * @param Category|null $category
-     * @return Product
+     * @return $this
      */
-    public function setCategory(?Category $category)
+    public function setCategory(Category $category = null)
     {
         $this->category = $category;
         return $this;
@@ -181,13 +186,18 @@ class Product
      */
     public function setQuantity($quantity)
     {
-        if ($quantity <= 0) {
-            $this->setIsActive(false);
-            $this->quantity = 0;
-            return $this;
-        }
         $this->quantity = $quantity;
         return $this;
+    }
+
+
+    public function decreaseQuantity(int $quantity){
+
+        $this->quantity -= $quantity;
+        if($this->quantity <= 0){
+            $this->setIsActive(0);
+            $this->quantity = 0;
+        }
     }
 
 
@@ -301,6 +311,24 @@ class Product
     {
         return $this->promoPrice;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getCartProducts()
+    {
+        return $this->cartProducts;
+    }
+
+    /**
+     * @param mixed $cartProducts
+     */
+    public function setCartProducts($cartProducts)
+    {
+        $this->cartProducts = $cartProducts;
+    }
+
+
 
     /**
      * @param int $discount

@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Cart;
 use AppBundle\Entity\Product;
+use AppBundle\Entity\Shipper;
 use AppBundle\Entity\User;
 use AppBundle\Service\CartServiceInterface;
 use AppBundle\Service\PromotionServiceInterface;
@@ -50,16 +51,16 @@ class CartController extends Controller
     {
         /** @var Cart $userCart */
         $userCart = $this->getUser()->getCart();
-        if ($userCart->getProducts()->contains($product)) {
-            $this->addFlash('error', 'You already added this product to cart!');
-            return $this->redirectToRoute("view_product",
-                ['product' => $product, 'id' => $product->getId()]);
-        }
-        $em = $this->getDoctrine()->getManager();
+
         $quantity = $request->request->get('quantity');
-        $product->setQuantity($quantity);
-        $userCart->addProduct($product);
-        $em->persist($userCart);
+
+        $em = $this->getDoctrine()->getManager();
+        $shipper = new Shipper();
+        $shipper->setQuantity($quantity);
+        $shipper->setCart($userCart);
+        $shipper->setProduct($product);
+
+        $em->persist($shipper);
         $em->flush();
         $this->addFlash('success', "{$product->getName()} added to cart successfully!");
         return $this->redirectToRoute('view_product', [
@@ -75,11 +76,14 @@ class CartController extends Controller
      */
     public function removeAction(Product $product)
     {
+        /** User $user */
+        $user = $this->getUser();
         /** @var Cart $userCart */
         $userCart = $this->getUser()->getCart();
-        $userCart->getProducts()->removeElement($product);
+        $userShipper = $this->getDoctrine()->getRepository(Shipper::class)
+            ->findOneBy(['product' => $product,'cart' => $userCart]);
         $em = $this->getDoctrine()->getManager();
-        $em->merge($userCart);
+        $em->remove($userShipper);
         $em->flush();
         $this->addFlash('success', "{$product->getName()} was removed from cart!");
         return $this->redirectToRoute('user_profile');
@@ -90,12 +94,8 @@ class CartController extends Controller
      */
     public function clearCart()
     {
-        /** @var Cart $userCart */
-        $userCart = $this->getUser()->getCart();
-        $userCart->clear();
-        $em = $this->getDoctrine()->getManager();
-        $em->merge($userCart);
-        $em->flush();
+        $user = $this->getUser();
+        $this->cartService->clearCart($user);
         return $this->redirectToRoute('user_profile');
     }
 

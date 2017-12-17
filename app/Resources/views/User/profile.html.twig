@@ -40,22 +40,26 @@
             <tr>
                 <th>Product</th>
                 <th>Description</th>
+                <th>Quantity</th>
                 <th>Price</th>
             </tr>
             </thead>
             <tbody>
-            {% for product in user.cart.products %}
+            {% for shipper in shippers %}
                 <tr class="table-hover">
-                    <td><a href="{{ path('remove_from_cart',{'id':product.id}) }}">X</a>{{ product.name }}</td>
-                    <td>{{ product.description }}</td>
-                    {% if product.topPromotion(app.user) %}
-                        <td>{{ product.promoPrice|number_format(2) }}</td>
+                    <td><a href="{{ path('remove_from_cart',{'id': shipper.product.id}) }}">X</a>{{ shipper.product.name
+                        }}</td>
+                    <td>{{ shipper.product.description }}</td>
+                    <td>{{ shipper.quantity }}</td>
+                    {% if shipper.product.topPromotion(app.user) %}
+                        <td>{{ shipper.product.promoPrice|number_format(2) }}</td>
                     {% else %}
-                        <td>{{ product.price|number_format(2) }}</td>
+                        <td>{{ shipper.product.price|number_format(2) }}</td>
                     {% endif %}
                 </tr>
             {% endfor %}
             <tr>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td>Total: {{ user.cart.getTotal(app.user)|number_format(2) }}</td>

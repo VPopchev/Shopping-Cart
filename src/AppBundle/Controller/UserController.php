@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Shipper;
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
 use AppBundle\Service\PromotionServiceInterface;
@@ -41,8 +42,13 @@ class UserController extends Controller
     {
         /** @var User $user */
         $user = $this->getUser();
+        $userCart = $user->getCart();
+        $cartShippers = $this->getDoctrine()
+            ->getRepository(Shipper::class)
+            ->findBy(['cart' => $userCart]);
         return $this->render('user/profile.html.twig', array(
-            'user' => $user
+            'user' => $user,
+            'shippers' => $cartShippers
         ));
     }
 
