@@ -9,6 +9,7 @@
 namespace AppBundle\Service;
 
 
+use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
 use AppBundle\Repository\ProductRepository;
@@ -93,15 +94,19 @@ class PromotionService implements PromotionServiceInterface
     {
         $userTypePromos = $this->promotionRepository->findUserTypePromotions();
         $richUsers = $this->userRepository->findRichUsers();
-        foreach ($richUsers as $user) {
-            /** @var Promotion $promo */
-            foreach ($userTypePromos as $promo) {
-                if ($promo->getUsers()->contains($user)) {
-                    continue;
-                }
-                $promo->addUser($user);
-            }
+        /** @var Promotion $promo */
+        foreach ($userTypePromos as $promo) {
+            $promo->setUsers($richUsers);
         }
+        $this->entityManager->flush();
+    }
+
+    public function addProductToPromotion(Promotion $promotion,Product $product)
+    {
+        if(!$promotion->getProducts()->contains($product)){
+            $promotion->addProduct($product);
+        }
+        $this->entityManager->persist($promotion);
         $this->entityManager->flush();
     }
 }

@@ -79,11 +79,11 @@
     </div><br/>
     <div class="row">
         {% for product in user.products %}
-            <div class="col-lg-4">
-                <article class="article">
+            <div class="col-md-4">
+                <article class="col-md-12">
                     <header>
                         <h2 style="text-align: center">{{ product.name }}</h2>
-                        <img src="{{ asset('app/images/' ~ product.image) }}" width="365" height="260"/>
+                        <img src="{{ asset('app/images/' ~ product.image) }}" style="height: 280px; width: 100%; display: block;"/>
                         <h4>Category: {{ product.category == null ? 'n/a': product.category.name }}</h4>
                     </header>
                     <p style="border: solid;border-radius: 3px">

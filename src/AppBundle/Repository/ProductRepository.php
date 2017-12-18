@@ -63,7 +63,8 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
     {
         $em = $this->getEntityManager();
         $query = $em->createQuery("SELECT COUNT(a.id) c 
-                                        FROM AppBundle:Product a 
+                                        FROM AppBundle:Product a
+                                        JOIN a.category ca
                                         WHERE a.isActive = 1");
 
         return intval($query->getOneOrNullResult()['c']);

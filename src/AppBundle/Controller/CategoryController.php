@@ -6,6 +6,7 @@ use AppBundle\Entity\Product;
 use AppBundle\Entity\Category;
 use AppBundle\Entity\User;
 use AppBundle\Form\CategoryType;
+use AppBundle\Service\CategoryServiceInterface;
 use AppBundle\Service\Paginator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -18,6 +19,18 @@ class CategoryController extends Controller
     const PRODUCTS_LIMIT = 6;
 
     /**
+     * @var CategoryServiceInterface
+     */
+    private $categoryService;
+
+
+    public function __construct(CategoryServiceInterface $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
+
+
+    /**
      * @Route("category/manage",name="manage_categories")
      * @Security("has_role('ROLE_EDITOR')")
      * @param Request $request
@@ -28,11 +41,15 @@ class CategoryController extends Controller
         $category = new Category();
         $form = $this->createForm(CategoryType::class, $category);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            return $this->saveCategory($category);
+            $this->categoryService->create($category);
+            $this->addFlash('success', "Category {$category->getName()} created successful!");
+            return $this->redirectToRoute('manage_categories');
+
         }
-        $categories = $this->getDoctrine()->getRepository(Category::class)
-            ->findAll();
+        $categories = $this->categoryService->getAllCategories();
+
         return $this->render('category/manage.html.twig', [
             'categories' => $categories,
             'form' => $form->createView()
@@ -47,14 +64,13 @@ class CategoryController extends Controller
      */
     public function listCategoryProductsAction(Category $category,int $page = 1)
     {
+
         $offset = ($page - 1) * self::PRODUCTS_LIMIT;
-        $products = [];
 
-        $this->recursion($category,$products);
+        $productsCount = $this->categoryService->getProductsCount($category->getid());
+        $products = $this->categoryService->listCategoryProducts(self::PRODUCTS_LIMIT,$offset,$category->getId());
 
-        $allProducts = count($products);
-        $products = array_slice($products,$offset,self::PRODUCTS_LIMIT);
-        $pages = ceil($allProducts / self::PRODUCTS_LIMIT);
+        $pages = ceil($productsCount / self::PRODUCTS_LIMIT);
 
         $paginator = new Paginator($page, $pages, $products);
         return $this->render(':Category:listCategoryProducts.html.twig', [
@@ -63,16 +79,6 @@ class CategoryController extends Controller
         ]);
     }
 
-    private function recursion(Category $category,&$products){
-        foreach ($category->getActiveProducts() as $activeProd){
-            array_push($products,$activeProd);
-        }
-        if ($category->getChildren()){
-            foreach($category->getChildren() as $child){
-                $this->recursion($child,$products);
-            }
-        }
-    }
 
     /**
      * @Route("category/remove/{id}",name="remove_category")
@@ -82,29 +88,10 @@ class CategoryController extends Controller
      */
     public function deleteCategory(Category $category)
     {
-        /** @var User $currentUser */
-        $currentUser = $this->getUser();
-        if (!$currentUser->isAdmin() && !$currentUser->isEditor()) {
-            return $this->redirectToRoute('homepage');
-        }
-        /** @var Product $product */
-        foreach ($category->getProducts() as $product) {
-            $product->setCategory(null);
-            $product->setIsActive('Inactive');
-        }
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($category);
-        $em->flush();
-        $this->addFlash('success', "Category {$category->getName()} deleted successful!");
+        $this->categoryService->delete($category);
+        $this->addFlash('success', "Category deleted successful!");
         return $this->redirectToRoute('manage_categories');
     }
 
-    private function saveCategory(Category $category)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($category);
-        $em->flush();
-        $this->addFlash('success', "Category {$category->getName()} created successful!");
-        return $this->redirectToRoute('manage_categories');
-    }
+
 }

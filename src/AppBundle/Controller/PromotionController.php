@@ -5,8 +5,8 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Category;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
-use AppBundle\Entity\User;
 use AppBundle\Form\PromotionType;
+use AppBundle\Service\CategoryServiceInterface;
 use AppBundle\Service\PromotionServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -23,17 +23,25 @@ class PromotionController extends Controller
     private $promotionService;
 
     /**
+     * @var CategoryServiceInterface
+     */
+    private $categoryService;
+
+    /**
      * PromotionController constructor.
      * @param PromotionServiceInterface $promotionService
+     * @param CategoryServiceInterface $categoryService
      */
-    public function __construct(PromotionServiceInterface $promotionService)
+    public function __construct(PromotionServiceInterface $promotionService,
+                                CategoryServiceInterface $categoryService)
     {
         $this->promotionService = $promotionService;
+        $this->categoryService = $categoryService;
     }
 
 
     /**
-     * @Route("/promotions/list", name="promotion_list")
+     * @Route("/promotion/list", name="promotion_list")
      * @Method("GET")
      */
     public function indexAction()
@@ -48,8 +56,6 @@ class PromotionController extends Controller
     }
 
     /**
-     * Creates a new promotion entity.
-     *
      * @Route("promotion/new", name="promotion_new")
      * @Method({"GET", "POST"})
      * @param Request $request
@@ -133,20 +139,11 @@ class PromotionController extends Controller
         $promotion = $this->getDoctrine()->getRepository(Promotion::class)->find($promotionId);
         /** @var Product $product */
         $product = $this->getDoctrine()->getRepository(Product::class)->find($productId);
-        if(!$promotion->getProducts()->contains($product)){
-            $promotion->addProduct($product);
-        }
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($promotion);
-        $em->flush();
-        if ($product->getCategory()->getParent()) {
-            $categoryId = $product->getCategory()->getParent()->getId();
-        } else {
-            $categoryId = $product->getCategory()->getId();
-        }
+        $this->promotionService->addProductToPromotion($promotion,$product);
+
         return $this->redirectToRoute('product_to_promotion', [
             'id' => $promotion->getId(),
-            'categoryId' => $categoryId
+            'categoryId' => $product->getCategory()->getId()
         ]);
     }
 
@@ -157,16 +154,7 @@ class PromotionController extends Controller
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function categoryToPromoAction(Promotion $promotion, int $categoryId){
-        $category = $this->getDoctrine()->getRepository(Category::class)
-            ->find($categoryId);
-        $products = [];
-        $this->findProductsRecursive($category,$products);
-        foreach ($products as $product){
-            $promotion->addProduct($product);
-        }
-        $em = $this->getDoctrine()->getManager();
-        $em->merge($promotion);
-        $em->flush();
+        $this->categoryService->addCategoryToPromotion($categoryId, $promotion);
         return $this->redirectToRoute('promotion_list');
     }
 
@@ -179,29 +167,13 @@ class PromotionController extends Controller
      */
     public function choiceProducts(Promotion $promotion, $categoryId)
     {
-        $category = $this->getDoctrine()
-            ->getRepository(Category::class)
-            ->find($categoryId);
-        $products = [];
-        $this->findProductsRecursive($category, $products);
+        $category = $this->categoryService->find($categoryId);
+        $products = $this->categoryService->getAllProducts($categoryId);
         return $this->render('promotion/addProducts.html.twig', [
             'promotion' => $promotion,
             'products' => $products,
             'category' => $category
         ]);
-    }
-
-
-    private function findProductsRecursive(Category $category, &$products)
-    {
-        foreach ($category->getActiveProducts() as $activeProd) {
-            array_push($products, $activeProd);
-        }
-        if ($category->getChildren()) {
-            foreach ($category->getChildren() as $child) {
-                $this->findProductsRecursive($child, $products);
-            }
-        }
     }
 
 }

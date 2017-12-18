@@ -9,6 +9,7 @@
 namespace AppBundle\Service;
 
 
+use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
 
@@ -21,4 +22,6 @@ interface PromotionServiceInterface
     public function addUserToPromotions(User $user);
 
     public function updateUserPromotions();
+
+    public function addProductToPromotion(Promotion $promotion,Product $product);
 }

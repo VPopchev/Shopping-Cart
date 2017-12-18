@@ -68,12 +68,6 @@ class Promotion
     private $products;
 
 
-    public function __construct()
-    {
-        $this->products = new ArrayCollection();
-        $this->users = new ArrayCollection();
-    }
-
     /**
      * @var User[]|ArrayCollection
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\User")
@@ -82,6 +76,12 @@ class Promotion
      *     inverseJoinColumns={@ORM\JoinColumn(name="user_id",referencedColumnName="id",onDelete="CASCADE")})
      */
     private $users;
+
+    public function __construct()
+    {
+        $this->products = new ArrayCollection();
+        $this->users = new ArrayCollection();
+    }
 
 
     /**
@@ -244,6 +244,13 @@ class Promotion
     public function addUser($user)
     {
         $this->users[] = $user;
+    }
+
+    /**
+     * @param ArrayCollection|User[] $users
+     */
+    public function setUsers(array $users){
+        $this->users = $users;
     }
 
 

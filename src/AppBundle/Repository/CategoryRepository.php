@@ -3,6 +3,8 @@
 namespace AppBundle\Repository;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Category;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping;
 use Doctrine\ORM\Query\ResultSetMapping;
 
 /**
@@ -13,6 +15,11 @@ use Doctrine\ORM\Query\ResultSetMapping;
  */
 class CategoryRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function __construct(EntityManager $em)
+    {
+        parent::__construct($em, new Mapping\ClassMetadata(Category::class));
+    }
+
     public function getMainCategoriesWithProducts(){
         $em = $this->getEntityManager();
         $query = $em->createQuery('SELECT a,c,p FROM AppBundle:Category a
@@ -30,23 +37,37 @@ class CategoryRepository extends \Doctrine\ORM\EntityRepository
         return $query->getResult();
     }
 
-
-    public function findProductsByCategoryPaginated(int $limit = 0, int $offset = 0,
-                                                        int $categoryId = -1)
-    {
-        $categoryFilter = '';
-
+    public function findAllProducts(int $categoryId){
         $em = $this->getEntityManager();
-        if ($categoryId > -1) {
-            $categoryFilter = " AND c.id = $categoryId" ;
-        }
-        $query = $em->createQuery("SELECT a,c FROM AppBundle:Product a
-                                       JOIN a.category c
-                                       WHERE a.isActive = '1' " . $categoryFilter
-            .                         'ORDER BY a.price ASC');
+        $query = $em->createQuery(" SELECT p,c
+                                        FROM AppBundle:Product p
+                                        INNER JOIN p.category c
+                                        WHERE c.id = $categoryId
+                                        OR c.parent = $categoryId");
+        return $query->getResult();
+    }
 
+    public function getProductsCountByCategory(int $categoryId){
+        $em = $this->getEntityManager();
+        $query = $em->createQuery(" SELECT COUNT(p)
+                                        FROM AppBundle:Product p
+                                        INNER JOIN p.category c
+			                            WHERE c = $categoryId or c.parent = $categoryId");
+        $query->setMaxResults(1);
+
+        return $query->getOneOrNullResult()[1];
+    }
+
+    public function findProductsByCategoryPaginated(int $categoryId,int $limit = 0, int $offset = 0)
+    {
+        $em = $this->getEntityManager();
+        $query = $em->createQuery(" SELECT p,c
+                                        FROM AppBundle:Product p
+                                        INNER JOIN p.category c
+			                            WHERE c = $categoryId or c.parent = $categoryId");
         $query->setFirstResult($offset);
         $query->setMaxResults($limit);
+
         return $query->getResult();
     }
 

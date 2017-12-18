@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block main %}
+{% block body %}
     <div class="row">
         {% for category in categories %}
             <div class="dropdown col-md-2">
                 <button type="button" class="btn btn-primary dropdown-toggle form-control"
-                        data-toggle="dropdown">
+                        data-toggle="dropdown" >
                     <span class="caret"></span>{{ category.name }}
                 </button>
                 <div class="dropdown-menu">
@@ -13,7 +13,6 @@
                 </div>
             </div>
         {% endfor %}
-
     </div>
     {% if app.user and (app.user.isAdmin() or app.user.isEditor()) %}
         <a href="{{ path('manage_categories') }}">Manage Categories</a>
@@ -48,13 +47,12 @@
             {% endif %}
         </li>
     {% endmacro %}
-    <div class="row">
-        {% for product in paginator.products %}
-            <div class="col-md-4">
-                <article class="col-md-12">
+        <div class="row text-center">
+            {% for product in paginator.products %}
+                <div class="productCard">
                     <header>
                         <h2 style="text-align: center">{{ product.name }}</h2>
-                        <img src="{{ asset('app/images/' ~ product.image) }}" width="365" height="260"/>
+                        <img src="{{ asset('app/images/' ~ product.image) }}" style="height: 280px; width: 100%; display: block;"/>
                     </header>
                     <p style="border: double;border-radius: 3px">
                         {{ product.getSummary }}
@@ -79,9 +77,8 @@
                                href="{{ path('view_product', {'id': product.id}) }}">View product &raquo;</a>
                         </div>
                     </footer>
-                </article>
-            </div>
-        {% endfor %}
+                </div>
+            {% endfor %}
     </div>
     <div class="text-center">
         {% if paginator.hasPrevious %}

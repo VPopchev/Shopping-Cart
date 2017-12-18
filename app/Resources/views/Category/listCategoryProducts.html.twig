@@ -4,14 +4,13 @@
     {% for child in category.children %}
         <a href="{{ path('category_products_list',{'id': child.id}) }}">{{ child.getName }}</a>
     {% endfor %}
-    <div class="row">
+    <div class="row text-center">
         {% for product in paginator.products %}
-            <div class="col-md-4">
-                <article class="col-md-12">
+                <article class="productCard">
                     <header>
                         <h2 style="text-align: center">{{ product.name }}</h2>
                         <img src="{{ asset('app/images/' ~ product.image) }}" width="365" height="260"/>
-                        <h4>Category: {{ product.category.name }}</h4>
+                        <h4>Category:{{ product.category.parent ? product.category.parent.name ~ '/': '' }}{{ product.category.name }}</h4>
                     </header>
 
                     <p style="border: solid;border-radius: 3px">
@@ -38,7 +37,6 @@
                         </div>
                     </footer>
                 </article>
-            </div>
         {% endfor %}
     </div>
     <div class="text-center">
