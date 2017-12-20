@@ -77,10 +77,22 @@ class Promotion
      */
     private $users;
 
+
+    /**
+     * @var Category[]|ArrayCollection
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Category")
+     * @ORM\JoinTable(name="promotions_categories",
+     *     joinColumns={@ORM\JoinColumn(name="promotion_id",referencedColumnName="id",onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="category_id",referencedColumnName="id",onDelete="CASCADE")})
+     */
+    private $categories;
+
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
 
@@ -253,6 +265,36 @@ class Promotion
         $this->users = $users;
     }
 
+    /**
+     * @return Category[]|ArrayCollection
+     */
+    public function getCategories()
+    {
+        return $this->categories;
+    }
 
+    /**
+     * @param Category[]|ArrayCollection $categories
+     */
+    public function setCategories($categories)
+    {
+        $this->categories = $categories;
+    }
+
+    /**
+     * @param Category $category
+     */
+    public function addCategory(Category $category){
+        $this->categories[] = $category;
+    }
+
+
+    public function removeProduct(Product $product){
+        $this->products->removeElement($product);
+    }
+
+    public function removeUser(User $user){
+        $this->users->removeElement($user);
+    }
 }
 

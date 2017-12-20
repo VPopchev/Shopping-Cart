@@ -47,6 +47,7 @@ class ProductType extends AbstractType
             ])
             ->add('category', EntityType::class,[
                 'class' => 'AppBundle\Entity\Category',
+                'placeholder' => 'Choice Category',
                 'choice_label' => function(Category $category){
                     $parentName = '';
                     if ($category->getParent() != null){

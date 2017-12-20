@@ -5,7 +5,7 @@
         {% for category in categories %}
             <div class="dropdown col-md-2">
                 <button type="button" class="btn btn-primary dropdown-toggle form-control"
-                        data-toggle="dropdown" >
+                        data-toggle="dropdown">
                     <span class="caret"></span>{{ category.name }}
                 </button>
                 <div class="dropdown-menu">
@@ -47,38 +47,46 @@
             {% endif %}
         </li>
     {% endmacro %}
-        <div class="row text-center">
-            {% for product in paginator.products %}
-                <div class="productCard">
-                    <header>
-                        <h2 style="text-align: center">{{ product.name }}</h2>
-                        <img src="{{ asset('app/images/' ~ product.image) }}" style="height: 280px; width: 100%; display: block;"/>
-                    </header>
-                    <p style="border: double;border-radius: 3px">
-                        {{ product.getSummary }}
-                    </p>
-                    <footer style="text-align: center">
-                        {% if product.topPromotion(app.user) %}
-                            <strike style="color: red">
-                                <b>Price: {{ product.price|number_format(2) }}лв</b></strike>.<br/>
-                            <b>Promotion Price: {{ product.promoPrice|number_format(2) }}</b>
-                        {% else %}
-                            <b>Price: {{ product.price|number_format(2) }}лв.</b>
-                        {% endif %}
-                    </footer>
-                    <small class="author">
-                        Category: {{ product.category.parent ? product.category.parent.name ~ '/': '' }}{{ product.category.name }}
-                        <br/>
-                        Quantity: {{ product.quantity }}
-                    </small>
-                    <footer>
-                        <div class="pull-right">
-                            <a class="btn btn-default btn-xs"
-                               href="{{ path('view_product', {'id': product.id}) }}">View product &raquo;</a>
-                        </div>
-                    </footer>
+    <div class="container body-content">
+    <div class="row text-center">
+    {% for product in paginator.products %}
+        <div class="col-md-4">
+        <article>
+        <header>
+            <h2 style="text-align: center">{{ product.name }}</h2>
+            {% if product.topPromotion(app.user) %}
+                <h4 style="color: red">{{ product.topPromotion(app.user).name }}</h4>
+            {% endif %}
+            <img src="{{ asset('app/images/' ~ product.image) }}" class="product-image"/>
+            <h4>
+                Category:{{ product.category.parent ? product.category.parent.name ~ '/': '' }}{{ product.category.name }}</h4>
+        </header>
+        <p style="border: double;border-radius: 3px">
+            {{ product.getSummary }}
+        </p>
+        <footer style="text-align: center">
+            {% if product.topPromotion(app.user) %}
+                <strike style="color: red">
+                    <b>Price: {{ product.price|number_format(2) }}лв</b></strike>.<br/>
+                <b>Promotion Price: {{ product.promoPrice|number_format(2) }}</b>
+            {% else %}
+                <b>Price: {{ product.price|number_format(2) }}лв.</b>
+            {% endif %}
+        </footer>
+        <small class="author">
+        Quantity: {{ product.quantity }} <br/>
+        Owner:<a href="{{ path('view_user_profile', {'id': product.owner.id}) }}"> {{ product.owner.username }} </a>
+                        </small>
+                        <footer>
+                            <div class="pull-right">
+                                <a class="btn btn-default btn-xs"
+                                   href="{{ path('view_product', {'id': product.id}) }}">View product &raquo;</a>
+                            </div>
+                        </footer>
+                    </article>
                 </div>
             {% endfor %}
+        </div>
     </div>
     <div class="text-center">
         {% if paginator.hasPrevious %}

@@ -9,6 +9,8 @@
 namespace AppBundle\Service;
 
 
+use AppBundle\Entity\Category;
+use AppBundle\Entity\Comment;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
@@ -53,6 +55,7 @@ class ProductService implements ProductServiceInterface
     {
         $this->setImage($product,$baseImage);
         $this->entityManager->flush();
+        $this->addToCategoryPromotions($product);
     }
 
     public function create(Product $product,User $user)
@@ -65,6 +68,7 @@ class ProductService implements ProductServiceInterface
         $this->entityManager->persist($product);
         $this->entityManager->flush();
         $this->addToUserTypePromotions($product);
+        $this->addToCategoryPromotions($product);
     }
 
     private function addToUserTypePromotions($product){
@@ -91,6 +95,53 @@ class ProductService implements ProductServiceInterface
     public function delete(Product $product)
     {
         $this->entityManager->remove($product);
+        $this->entityManager->flush();
+    }
+
+    private function addToCategoryPromotions(Product $product)
+    {
+        /** @var Promotion $promotion */
+        $promotion = $product->getTopPromotion();
+        if(null != $promotion){
+            $promotion->removeProduct($product);
+        }
+        $category = $product->getCategory();
+        /** @var Category $parent */
+        $parent = $category->getParent();
+        if (null !== $parent){
+            $categoryId = $parent->getId();
+        } else {
+            $categoryId = $category->getId();
+        }
+        $categoryPromos = $this
+            ->promotionRepository
+            ->findCategoryPromotion($categoryId);
+        /** @var Promotion $promo */
+        foreach ($categoryPromos as $promo){
+            $promo->addProduct($product);
+        }
+        $this->entityManager->flush();
+    }
+
+    public function findByUserPaginated(int $limit, int $offset, int $userId)
+    {
+        return $this
+                    ->productRepository
+                    ->findByUserPaginated($limit,$offset,$userId);
+    }
+
+    public function getUserProductsCount(int $userId)
+    {
+        return $this->productRepository->getUserProductsCount($userId);
+    }
+
+    public function addComment(Product $product, string $content, $user)
+    {
+        $comment = new Comment();
+        $comment->setAuthor($user);
+        $comment->setProduct($product);
+        $comment->setContent($content);
+        $this->entityManager->persist($comment);
         $this->entityManager->flush();
     }
 }

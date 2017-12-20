@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Entity;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -38,8 +39,11 @@ class Product
 
     /**
      * @var string
-     * @Assert\NotBlank(
-     *     message="Product description cannot be empty!"
+     * @Assert\Length(
+     *     min="3",
+     *     max="20",
+     *     minMessage="Name should be at least {{ limit }} characters long!",
+     *     maxMessage="Name should be max {{ limit }} characters long!"
      * )
      * @ORM\Column(name="description", type="text")
      */
@@ -104,9 +108,20 @@ class Product
     private $promoPrice;
 
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Shipper",mappedBy="product")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Shipper",mappedBy="product",cascade={"persist"})
      */
     private $cartProducts;
+
+    /**
+     * @var Comment[]|ArrayCollection
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Comment",mappedBy="product")
+     */
+    private $comments;
+
+    public function __construct()
+    {
+        $this->comments = new ArrayCollection();
+    }
 
     /**
      * @return mixed
@@ -123,7 +138,6 @@ class Product
     {
         $this->image = $image;
     }
-
 
 
     /**
@@ -191,10 +205,11 @@ class Product
     }
 
 
-    public function decreaseQuantity(int $quantity){
+    public function decreaseQuantity(int $quantity)
+    {
 
         $this->quantity -= $quantity;
-        if($this->quantity <= 0){
+        if ($this->quantity <= 0) {
             $this->setIsActive(0);
             $this->quantity = 0;
         }
@@ -284,8 +299,9 @@ class Product
         return $this->price;
     }
 
-    public function getSummary(){
-        return substr($this->description,0,50) . '...';
+    public function getSummary()
+    {
+        return substr($this->description, 0, 50) . '...';
     }
 
     /**
@@ -328,13 +344,32 @@ class Product
         $this->cartProducts = $cartProducts;
     }
 
+    /**
+     * @return Comment[]|ArrayCollection
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    /**
+     * @param Comment $comment
+     */
+    public function addComment(Comment $comment)
+    {
+        $this->comments[] = $comment;
+    }
+
+
+
 
 
     /**
      * @param int $discount
      * @internal param mixed $promoPrice
      */
-    public function setPromoPrice(int $discount){
+    public function setPromoPrice(int $discount)
+    {
         $basePrice = $this->getPrice();
         $promoPrice = $basePrice - ($basePrice / 100.0) * $discount;
         $this->promoPrice = $promoPrice;
@@ -345,27 +380,29 @@ class Product
         /** @var ArrayCollection $promotions */
         $promotions = $this->getPromotions();
 
-        if (null != $user) {
+        if (null !== $user) {
             $promotions = $promotions->filter(function (Promotion $p) use ($user) {
                 return ($p->getUsers()->contains($user));
-            });
-            $promotions = $promotions->filter(function (Promotion $p){
+            }
+            );
+            $promotions = $promotions->filter(function (Promotion $p) {
                 $currDate = new \DateTime('NOW');
                 return ($currDate >= $p->getStartDate() and $currDate <= $p->getEndDate() ? 1 : 0);
             });
-        }  else {
-            $promotions = $promotions->filter(function (Promotion $p){
+        } else {
+            $promotions = $promotions->filter(function (Promotion $p) {
                 $currDate = new \DateTime('NOW');
-                return ($currDate >= $p->getStartDate() and $currDate <= $p->getEndDate() and $p->getType() == 1 ? 1 :0);
+                return (($currDate >= $p->getStartDate() and $currDate <= $p->getEndDate()) and
+                    ($p->getType() == 'product' or $p->getType() == 'category') ? 1 : 0);
             });
         }
         $iterator = $promotions->getIterator();
-        $iterator->uasort(function (Promotion $a,Promotion $b) {
+        $iterator->uasort(function (Promotion $a, Promotion $b) {
             return ($a->getDiscount() < $b->getDiscount()) ? 1 : -1;
         });
         $collection = new ArrayCollection(iterator_to_array($iterator));
         $promotion = $collection->first();
-        if(is_object($promotion)) {
+        if (is_object($promotion)) {
             $this->setPromoPrice($promotion->getDiscount());
             return $promotion;
         }

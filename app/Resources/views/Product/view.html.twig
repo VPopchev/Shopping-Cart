@@ -16,6 +16,9 @@
                 <article class="col-md-12">
                     <header>
                         <h2>{{ product.name }}</h2>
+                        {% if product.topPromotion(app.user) %}
+                            <h4 style="color: red">{{ product.topPromotion(app.user).name }}</h4>
+                        {% endif %}
                     </header>
                     <img src="{{ asset('app/images/' ~ product.image) }}" class="img-responsive"/>
                     <p>
@@ -59,6 +62,24 @@
                     </footer>
                 </article>
             </div>
+            <div class="col-md-4">
+                <h3>Comments</h3>
+                {% for comment in product.comments %}
+                    <div class="row comment">
+                        <p>{{ comment.content }}</p>
+                        Author: {{ comment.author.username }}
+                    </div>
+                {% endfor %}
+            </div>
+            {% if app.user %}
+                <div class="col-md-4 comment-form">
+                    <h3>Add Comment</h3>
+                <form action="{{ path('comment_product', {'id': product.id}) }}" method="post">
+                    <textarea name="content"></textarea> <br/>
+                    <button type="submit">Comment</button>
+                </form>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

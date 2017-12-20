@@ -23,12 +23,15 @@
         </article>
     </div>
     <div class="container">
-        <h2>Products</h2>
+        <h2>{{ user.Username }} Products</h2>
         <div class="row text-center">
-            {% for product in user.products %}
+            {% for product in paginator.products %}
                     <article class="productCard">
                         <header>
                             <h2 style="text-align: center">{{ product.name }}</h2>
+                            {% if product.topPromotion(app.user) %}
+                                <h4 style="color: red">{{ product.topPromotion(app.user).name }}</h4>
+                            {% endif %}
                             <img src="{{ asset('app/images/' ~ product.image) }}" class="img-responsive"/>
                             <h4>Category: {{ product.category == null ? 'n/a': product.category.name }}</h4>
                         </header>
@@ -58,5 +61,24 @@
                     </article>
             {% endfor %}
         </div>
+    </div>
+    <div class="text-center">
+        {% if paginator.hasPrevious %}
+            <a href="{{ path('view_user_profile', {'id': user.id, 'page': 1}) }}">First</a> §§
+            <a href="{{ path('view_user_profile', {'id': user.id, 'page': paginator.currentPage - 1}) }}">Previous</a> |
+        {% endif %}
+        {% if paginator.allPages > 0 %}
+            {% for i in range(1, paginator.allPages) %}
+                {% if paginator.currentPage == i %}
+                    {{ i }}
+                {% else %}
+                    <a href="/{{ i }}">{{ i }}</a>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if paginator.hasNext %}
+            <a href="{{ path('view_user_profile', {'id': user.id, 'page': paginator.currentPage + 1}) }}">Next</a> §§
+            <a href="{{ path('view_user_profile', {'id': user.id, 'page': paginator.allPages }) }}">Last</a>
+        {% endif %}
     </div>
 {% endblock %}

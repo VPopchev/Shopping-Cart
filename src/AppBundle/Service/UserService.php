@@ -9,7 +9,9 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Cart;
+use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
+use AppBundle\Repository\PromotionRepository;
 use AppBundle\Repository\RoleRepository;
 use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManager;
@@ -31,6 +33,7 @@ class UserService implements UserServiceInterface
      * @var RoleRepository
      */
     private $roleRepository;
+
 
     /**
      * UserService constructor.
@@ -63,5 +66,11 @@ class UserService implements UserServiceInterface
         $this->entityManager->persist($cart);
         $this->entityManager->flush();
         return $cart;
+    }
+
+
+    public function findAll()
+    {
+        return $this->userRepository->findAll();
     }
 }

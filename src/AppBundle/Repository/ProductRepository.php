@@ -12,7 +12,6 @@ namespace AppBundle\Repository;
 use AppBundle\Entity\Product;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ProductRepository extends \Doctrine\ORM\EntityRepository
 {
@@ -82,5 +81,27 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
         $query->setMaxResults($limit);
 
         return $query->getResult();
+    }
+
+    public function findByUserPaginated(int $limit = 0,int $offset = 0,int $userId){
+        $em = $this->getEntityManager();
+        $query = $em->createQuery("SELECT a,c FROM AppBundle:Product a
+                                       JOIN a.category c
+                                       WHERE a.isActive = 1
+                                       AND a.owner = $userId
+                                       ORDER BY a.price ASC");
+
+        $query->setFirstResult($offset);
+        $query->setMaxResults($limit);
+
+        return $query->getResult();
+    }
+
+    public function getUserProductsCount(int $userId){
+        $em = $this->getEntityManager();
+        $query = $em->createQuery("SELECT COUNT(a) c FROM AppBundle:Product a 
+                                        WHERE a.isActive = 1
+                                        AND a.owner = $userId");
+        return $query->getOneOrNullResult()['c'];
     }
 }

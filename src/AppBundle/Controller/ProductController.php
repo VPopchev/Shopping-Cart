@@ -2,15 +2,16 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Comment;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\User;
 use AppBundle\Form\ProductType;
 use AppBundle\Service\ProductServiceInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends Controller
 {
@@ -76,6 +77,20 @@ class ProductController extends Controller
         ]);
     }
 
+    /**
+     * @param Product $product
+     * @param Request $request
+     * @Route("product/comment/{id}",name="comment_product")
+     */
+    public function commentAction(Product $product, Request $request){
+        $content = $request->request->get('content');
+        $author = $this->getUser();
+        $this->productService->addComment($product,$content,$author);
+        return $this->redirectToRoute('view_product',[
+            'id' => $product->getId()
+        ]);
+    }
+
 
     /**
      * @Route("product/edit/{id}",name="edit_product")
@@ -103,7 +118,9 @@ class ProductController extends Controller
             $this->productService->edit($product, $baseImage);
             $this->addFlash('success',
                 "Product {$product->getName()} successful edited!");
-            return $this->redirectToRoute('user_profile');
+            return $this->redirectToRoute('view_product',[
+                'id' => $product->getId()
+            ]);
         }
         return $this->render('product/edit.html.twig', ['form' => $form->createView()]);
     }

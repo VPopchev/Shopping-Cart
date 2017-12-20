@@ -7046,7 +7046,7 @@ a.list-group-item-danger.active:focus {
 }
 
 article {
-  border: dashed;
+  border: double;
   padding: 5px;
   border-radius: 3px;
   margin: 10px
@@ -7075,4 +7075,24 @@ article .author  {
   display: inline-block;
   margin: 10px;
   padding: 5px;
+}
+
+.product-image{
+  height: 280px;
+  width: 100%;
+  display: block;
+}
+
+.comment {
+  text-align: center;
+  background-color: #2287de;
+  border-radius: 3px;
+  margin: 1px;
+  color: white;
+}
+
+.comment-form {
+  background-color: #2287de;
+  text-align: center;
+  border-radius: 3px;
 }

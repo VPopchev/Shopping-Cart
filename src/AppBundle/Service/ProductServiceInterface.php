@@ -19,4 +19,10 @@ interface ProductServiceInterface
     public function create(Product $product,User $user);
 
     public function delete(Product $product);
+
+    public function findByUserPaginated(int $limit,int $offset,int $userId);
+
+    public function getUserProductsCount(int $userId);
+
+    public function addComment(Product $product,string $content,$user);
 }

@@ -42,7 +42,7 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label" for="user_roles">Change Role</label>
                         <div class="col-sm-4 ">
-                            <select name="role" multiple id="user_roles">
+                            <select name="role" class="form-control" multiple="multiple" id="user_roles" >
                                 <option {{ user.isEditor() ? 'selected': '' }} value="ROLE_EDITOR">Editor</option>
                                 <option {{ user.isAdmin() ? 'selected': '' }} value="ROLE_ADMIN">Admin</option>
                             </select>
@@ -51,7 +51,8 @@
                     <input type="hidden" name="user[password]" value="{{ user.password }}">
                     <div class="form-group">
                         <div class="col-sm-4 col-sm-offset-4">
-                            <a class="btn btn-default" href="">Cancel</a>
+                            <a class="btn btn-default" href="{{ path('view_user_profile', {'id': user.id, 'page': 1})
+                            }}">Cancel</a>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
                     </div>

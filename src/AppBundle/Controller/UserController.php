@@ -5,6 +5,8 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Shipper;
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
+use AppBundle\Service\Paginator;
+use AppBundle\Service\ProductServiceInterface;
 use AppBundle\Service\PromotionServiceInterface;
 use AppBundle\Service\UserServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -14,6 +16,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class UserController extends Controller
 {
+
+    const PRODUCTS_LIMIT = 6;
 
     /**
      * @var UserServiceInterface
@@ -25,12 +29,19 @@ class UserController extends Controller
      */
     private $promotionService;
 
+    /**
+     * @var ProductServiceInterface
+     */
+    private $productService;
+
 
     public function __construct(UserServiceInterface $userService,
-                                PromotionServiceInterface $promotionService)
+                                PromotionServiceInterface $promotionService,
+                                ProductServiceInterface $productService)
     {
         $this->userService = $userService;
         $this->promotionService = $promotionService;
+        $this->productService = $productService;
     }
 
 
@@ -78,13 +89,20 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("user/userProfileView/{id}",name="view_user_profile")
+     * @Route("user/userProfileView/{id}/{page}",name="view_user_profile")
      * @param User $user
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function viewUserProfile(User $user)
+    public function viewUserProfile(User $user, int $page = 1)
     {
-        return $this->render('user/userProfileView.html.twig',
-            ['user' => $user]);
+        $offset = ($page - 1) * self::PRODUCTS_LIMIT;
+        $products = $this->productService->findByUserPaginated(self::PRODUCTS_LIMIT, $offset, $user->getId());
+        $allProducts = $this->productService->getUserProductsCount($user->getId());
+        $pages = ceil($allProducts / self::PRODUCTS_LIMIT);
+        $paginator = new Paginator($page, $pages, $products);
+        return $this->render('user/userProfileView.html.twig', [
+            'user' => $user,
+            'paginator' => $paginator
+        ]);
     }
 }

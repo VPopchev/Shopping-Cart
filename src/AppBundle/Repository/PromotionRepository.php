@@ -18,17 +18,28 @@ class PromotionRepository extends \Doctrine\ORM\EntityRepository
         parent::__construct($em, new Mapping\ClassMetadata(Promotion::class));
     }
 
-    public function findProductTypePromotions(){
+    public function findProductAndCategoryPromotions(){
         $em = $this->getEntityManager();
-        $query = $em->createQuery('SELECT p FROM AppBundle:Promotion p 
-                                        WHERE p.type = 1');
+        $query = $em->createQuery("SELECT p FROM AppBundle:Promotion p 
+                                        WHERE p.type = 'product'
+                                        OR p.type  = 'category'");
         return $query->getResult();
     }
 
     public function findUserTypePromotions(){
         $em = $this->getEntityManager();
-        $query = $em->createQuery('SELECT p FROM AppBundle:Promotion p 
-                                        WHERE p.type = 2');
+        $query = $em->createQuery("SELECT p FROM AppBundle:Promotion p 
+                                        WHERE p.type = 'user'");
         return $query->getResult();
     }
+
+    public function findCategoryPromotion($categoryId){
+        $em = $this->getEntityManager();
+        $query = $em->createQuery("SELECT p FROM AppBundle:Promotion p
+                                        INNER JOIN p.categories c
+                                        WHERE c.id = $categoryId
+                                        OR c.parent = $categoryId");
+        return $query->getResult();
+    }
+
 }

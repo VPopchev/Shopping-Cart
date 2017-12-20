@@ -2,8 +2,6 @@
 
 {% block body %}
     <h1>Add Products to {{ promotion.name }}</h1>
-    <h4><a href="{{ path('category_to_promotion', {'categoryId': category.id, 'id': promotion.id}) }}">Add all
-            products</a></h4>
     <table class="table" border="1">
         <thead>
         <tr>
@@ -12,7 +10,7 @@
             <th>Quantity</th>
             <th>Price</th>
             <th>Owner</th>
-            <th>Action</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -23,7 +21,8 @@
                 <td>{{ product.quantity }}</td>
                 <td>{{ product.price }}</td>
                 <td>{{ product.owner.username }}</td>
-                <td><a href="{{ path('add_product_to_promotion', {'promotionId': promotion.id,'productId': product.id}) }}">-> Add</a>
+                <td><a href="{{ path('add_product_to_promotion', {'promotionId': promotion.id,'productId': product.id}) }}">Add</a>
+                    <a href="{{ path('remove_product_from_promotion', {'promotionId': promotion.id,'productId': product.id}) }}">Remove</a>
                 </td>
             </tr>
         {% endfor %}

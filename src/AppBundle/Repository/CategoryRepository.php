@@ -64,7 +64,8 @@ class CategoryRepository extends \Doctrine\ORM\EntityRepository
         $query = $em->createQuery(" SELECT p,c
                                         FROM AppBundle:Product p
                                         INNER JOIN p.category c
-			                            WHERE c = $categoryId or c.parent = $categoryId");
+			                            WHERE (c = $categoryId or c.parent = $categoryId)
+			                            AND p.isActive = 1");
         $query->setFirstResult($offset);
         $query->setMaxResults($limit);
 

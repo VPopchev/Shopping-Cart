@@ -115,6 +115,13 @@ class User implements UserInterface
      */
     private $cart;
 
+
+    /**
+     * @var Comment[]|ArrayCollection
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Comment",mappedBy="owner")
+     */
+    private $comments;
+
     /**
      * @return mixed
      */
@@ -139,6 +146,7 @@ class User implements UserInterface
     {
         $this->products = new ArrayCollection();
         $this->roles = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
 

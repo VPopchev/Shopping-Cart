@@ -9,40 +9,51 @@
                         <h2>{{ promotion.name }}</h2>
                     </header>
                     <p>
-                        {{ promotion.type}}
+                        {{ promotion.type }}
                     </p>
                     <small class="author">
                         Start Date: {{ promotion.startDate|date }}<br/>
                         End Date: {{ promotion.endDate|date }}<br/>
                     </small>
                     <hr>
+                        <a href="{{ path('promotion_edit', { 'id': promotion.id }) }}">Edit</a>
                 </article>
             </div>
             <div class="col-md-4">
                 <ul>
-                    {% if promotion.type == 1 %}
+                    {% if promotion.type == 'product' %}
                         {% for category in categories %}
                             <li>
                                 <a href="{{ path('product_to_promotion', {'categoryId': category.id, 'id': promotion.id}) }}">
-                                    Add {{ category.parent ? category.parent.name ~ '/' ~ category.name : category.name ~ '' }} products to {{ promotion.name }}
+                                    Add {{ category.parent ? category.parent.name ~ '/' ~ category.name : category.name ~ '' }}
+                                    products to {{ promotion.name }}
                                 </a>
                             </li>
                         {% endfor %}
-                    {% else %}
-                        <li><a href="#">Add users to "{{ promotion.name }}"</a></li>
                     {% endif %}
+                    {% if promotion.type == 'category' %}
+                        {% for category in categories %}
+                            {% if category in promotion.categories %}
+                                <li><a style="color: red" href="{{ path('remove_category_from_promo', {'categoryId':
+                                        category
+                                        .id, 'id':
+                                        promotion.id}) }}">Remove {{ category.parent ? category.parent.name ~ '/' ~ category.name :
+                                        category.name ~ '' }} category from promotion</a></li>
+                            {% else %}
+                                <li>
+                                    <a href="{{ path('category_to_promotion', {'categoryId': category.id, 'id': promotion.id}) }}">Add {{ category.parent ? category.parent.name ~ '/' ~ category.name :
+                                        category.name ~ '' }} category to promotion</a></li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    <li><a href="{{ path('user_to_promotion', {'id': promotion.id}) }}">Add users to "{{ promotion.name }}"</a></li>
                 </ul>
             </div>
         </div>
     </div>
-
     <ul>
         <li>
             <a href="{{ path('promotion_list') }}">Back to the list</a>
         </li>
-        <li>
-            <a href="{{ path('promotion_edit', { 'id': promotion.id }) }}">Edit</a>
-        </li>
     </ul>
-
 {% endblock %}

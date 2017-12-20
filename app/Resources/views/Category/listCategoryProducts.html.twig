@@ -1,43 +1,50 @@
 {% extends 'base.html.twig' %}
 {% block main %}
-    <h1>{{ category.name }} Products</h1>
+    <h1>{{ category.parent ? category.parent.name ~ '/': '' }}{{ category.name }} Products</h1>
     {% for child in category.children %}
-        <a href="{{ path('category_products_list',{'id': child.id}) }}">{{ child.getName }}</a>
+        <a class="btn btn-default" href="{{ path('category_products_list',{'id': child.id}) }}">{{ child.getName }}</a>
     {% endfor %}
-    <div class="row text-center">
-        {% for product in paginator.products %}
-                <article class="productCard">
-                    <header>
-                        <h2 style="text-align: center">{{ product.name }}</h2>
-                        <img src="{{ asset('app/images/' ~ product.image) }}" width="365" height="260"/>
-                        <h4>Category:{{ product.category.parent ? product.category.parent.name ~ '/': '' }}{{ product.category.name }}</h4>
-                    </header>
+    <div class="container body-content">
+        <div class="row text-center">
+            {% for product in paginator.products %}
+                <div class="col-md-4">
+                    <article>
+                        <header>
+                            <h2 style="text-align: center">{{ product.name }}</h2>
+                            {% if product.topPromotion(app.user) %}
+                                <h4 style="color: red">{{ product.topPromotion(app.user).name }}</h4>
+                            {% endif %}
+                            <img src="{{ asset('app/images/' ~ product.image) }}" class="product-image"/>
+                            <h4>Category:{{ product.category.parent ? product.category.parent.name ~ '/': '' }}{{ product.category.name }}</h4>
+                        </header>
 
-                    <p style="border: solid;border-radius: 3px">
-                        Description: {{ product.description }}
-                    </p>
+                        <p style="border: solid;border-radius: 3px">
+                            Description: {{ product.description }}
+                        </p>
 
-                    <footer style="text-align: center">
-                        {% if product.topPromotion(app.user) %}
-                            <strike style="color: red">
-                                <b>Price: {{ product.price|number_format(2) }}лв</b></strike>.<br/>
-                            <b>Promotion Price: {{ product.promoPrice|number_format(2) }}</b>
-                        {% else %}
-                            <b>Price: {{ product.price|number_format(2) }}лв.</b>
-                        {% endif %}
-                    </footer>
-                    <small class="author">
-                        Owner: {{ product.owner.username }}
-                    </small>
+                        <footer style="text-align: center">
+                            {% if product.topPromotion(app.user) %}
+                                <strike style="color: red">
+                                    <b>Price: {{ product.price|number_format(2) }}лв</b></strike>.<br/>
+                                <b>Promotion Price: {{ product.promoPrice|number_format(2) }}</b>
+                            {% else %}
+                                <b>Price: {{ product.price|number_format(2) }}лв.</b>
+                            {% endif %}
+                        </footer>
+                        <small class="author">
+                            Owner: {{ product.owner.username }}
+                        </small>
 
-                    <footer>
-                        <div class="pull-right">
-                            <a class="btn btn-default btn-xs"
-                               href="{{ path('view_product', {'id': product.id}) }}">View product &raquo;</a>
-                        </div>
-                    </footer>
-                </article>
-        {% endfor %}
+                        <footer>
+                            <div class="pull-right">
+                                <a class="btn btn-default btn-xs"
+                                   href="{{ path('view_product', {'id': product.id}) }}">View product &raquo;</a>
+                            </div>
+                        </footer>
+                    </article>
+                </div>
+            {% endfor %}
+        </div>
     </div>
     <div class="text-center">
         {% if paginator.hasPrevious %}

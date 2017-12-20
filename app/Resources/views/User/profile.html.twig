@@ -24,7 +24,7 @@
             Email: {{ user.email }}
         </p>
         <p>
-            Cash: {{ user.cash }}
+            Cash: {{ user.cash|number_format(2) }}
         </p>
         <small class="author">
             Registration Date:{{ user.registrationDate|date }}

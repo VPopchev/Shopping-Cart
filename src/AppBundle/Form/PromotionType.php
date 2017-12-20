@@ -27,9 +27,11 @@ class PromotionType extends AbstractType
                 'attr' => ['class' => 'form-control'],
             ])
             ->add('type', ChoiceType::class, [
+                'placeholder' => 'Choice Promotion Type',
                 'choices' => [
-                    'Product' => 1,
-                    'User' => 2,
+                    'Product' => 'product',
+                    'Category' => 'category',
+                    'User' => 'user',
                 ],
                 'attr' => ['class' => 'form-control'],
                 'label_attr' => ['class' => 'col-sm-4 control-label']

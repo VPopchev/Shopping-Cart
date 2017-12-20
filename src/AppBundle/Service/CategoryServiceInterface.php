@@ -22,8 +22,6 @@ interface CategoryServiceInterface
 
     public function delete(Category $category);
 
-    public function addCategoryToPromotion(int $categoryId,Promotion $promotion);
-
     public function getAllProducts(int $categoryId);
 
     public function getAllCategories();

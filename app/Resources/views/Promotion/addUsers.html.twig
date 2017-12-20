@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Add Users to {{ promotion.name }}</h1>
+    <table class="table" border="1">
+        <thead>
+        <tr>
+            <th>Username</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Cash</th>
+            <th>Email</th>
+            <th>Registration Date</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr {{ user in promotion.users ? 'bgcolor="lightgreen"' : '' }}>
+                <td>{{ user.username }}</td>
+                <td>{{ user.firstName }}</td>
+                <td>{{ user.lastName }}</td>
+                <td>{{ user.cash }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.registrationDate|date }}</td>
+                <td>
+                    <a href="{{ path('add_user_to_promo', {'id': promotion.id, 'userId': user.id})}}">Add</a>|
+                    <a href="{{ path('remove_user_from_promo', {'id': promotion.id, 'userId': user.id})}}">Remove</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+

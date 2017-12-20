@@ -56,16 +56,23 @@ class CartService implements CartServiceInterface
         $userCart = $user->getCart();
         foreach ($userCart->getShipper() as $shipper) {
             $product = $shipper->getProduct();
-            $productTopPromo = $product->getTopPromotion();
+            $productTopPromo = $product->getTopPromotion($user);
             /** @var User $productOwner */
             $productOwner = $product->getOwner();
             $productOwner->increaseCash($productTopPromo == null ?
-                $product->getPrice() : $product->getPromoPrice());
+                $product->getPrice() * $shipper->getQuantity() :
+                $product->getPromoPrice() * $shipper->getQuantity());
+
             $newProduct = $this->createNewProd($user, $product);
             $newProduct->setQuantity($shipper->getQuantity());
-            $product->decreaseQuantity($shipper->getQuantity());
             $this->entityManager->persist($newProduct);
-            $this->entityManager->merge($product);
+            $product->decreaseQuantity($shipper->getQuantity());
+            if($product->getQuantity() == 0){
+                $this->entityManager->remove($product);
+            }else {
+                $this->entityManager->merge($product);
+                $this->updateCarts($product);
+            }
             $this->entityManager->flush();
         }
         $user->decreaseCash($userCart->getTotal($user));
@@ -102,5 +109,17 @@ class CartService implements CartServiceInterface
         $newProduct->setPrice($product->getPrice());
         $newProduct->setOwner($user);
         return $newProduct;
+    }
+
+    private function updateCarts(Product $product)
+    {
+        $shippers = $this->shipperRepository->findBy(['product' => $product]);
+        /** @var Shipper $shipper */
+        foreach ($shippers as $shipper){
+            if($shipper->getQuantity() > $product->getQuantity()){
+                $shipper->setQuantity($product->getQuantity());
+            }
+            $this->entityManager->flush();
+        }
     }
 }

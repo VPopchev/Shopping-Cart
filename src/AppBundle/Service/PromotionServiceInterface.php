@@ -21,7 +21,17 @@ interface PromotionServiceInterface
 
     public function addUserToPromotions(User $user);
 
+    public function addUserToPromo(Promotion $promotion,int $userId);
+
+    public function removeUserFromPromo(Promotion $promotion,int $userId);
+
     public function updateUserPromotions();
 
+    public function addCategoryToPromotion(int $categoryId,Promotion $promotion);
+
+    public function removeCategoryFromPromotion(int $categoryId,Promotion $promotion);
+
     public function addProductToPromotion(Promotion $promotion,Product $product);
+
+    public function removeProductFromPromotion(Promotion $promotion,Product $product);
 }

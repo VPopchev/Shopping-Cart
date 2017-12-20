@@ -8,6 +8,7 @@ use AppBundle\Entity\Promotion;
 use AppBundle\Form\PromotionType;
 use AppBundle\Service\CategoryServiceInterface;
 use AppBundle\Service\PromotionServiceInterface;
+use AppBundle\Service\UserServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,15 +29,23 @@ class PromotionController extends Controller
     private $categoryService;
 
     /**
+     * @var UserServiceInterface
+     */
+    private $userService;
+
+    /**
      * PromotionController constructor.
      * @param PromotionServiceInterface $promotionService
      * @param CategoryServiceInterface $categoryService
+     * @param UserServiceInterface $userService
      */
     public function __construct(PromotionServiceInterface $promotionService,
-                                CategoryServiceInterface $categoryService)
+                                CategoryServiceInterface $categoryService,
+                                UserServiceInterface $userService)
     {
         $this->promotionService = $promotionService;
         $this->categoryService = $categoryService;
+        $this->userService = $userService;
     }
 
 
@@ -68,9 +77,12 @@ class PromotionController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($promotion->getType() == 2) {
+            if ($promotion->getType() == 'user') {
                 $this->promotionService->setRichUsersToPromo($promotion);
-            } else if ($promotion->getType() == 1) {
+            }
+            else if ($promotion->getType() == 'product' ||
+                     $promotion->getType() == 'category' )
+            {
                 $this->promotionService->setAllUsersToPromo($promotion);
             }
             $em = $this->getDoctrine()->getManager();
@@ -148,14 +160,50 @@ class PromotionController extends Controller
     }
 
     /**
+     * @param int $promotionId
+     * @param int $productId
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @Route("promotion/removeProduct/{promotionId}/{productId}", name="remove_product_from_promotion")
+     */
+    public function removeProductAction(int $promotionId, int $productId)
+    {
+        /** @var Promotion $promotion */
+        $promotion = $this->getDoctrine()->getRepository(Promotion::class)->find($promotionId);
+        /** @var Product $product */
+        $product = $this->getDoctrine()->getRepository(Product::class)->find($productId);
+        $this->promotionService->removeProductFromPromotion($promotion,$product);
+
+        return $this->redirectToRoute('product_to_promotion', [
+            'id' => $promotion->getId(),
+            'categoryId' => $product->getCategory()->getId()
+        ]);
+    }
+
+    /**
      * @param Promotion $promotion
      * @param int $categoryId
      * @Route("promotion/addCategory/{id}/{categoryId}",name="category_to_promotion")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function categoryToPromoAction(Promotion $promotion, int $categoryId){
-        $this->categoryService->addCategoryToPromotion($categoryId, $promotion);
-        return $this->redirectToRoute('promotion_list');
+        $this->promotionService->addCategoryToPromotion($categoryId, $promotion);
+
+        return $this->redirectToRoute('promotion_show',[
+            'id' => $promotion->getId()
+        ]);
+    }
+
+    /**
+     * @param Promotion $promotion
+     * @param int $categoryId
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @Route("promotion/removeCategory/{id}/{categoryId}",name="remove_category_from_promo")
+     */
+    public function removeCategoryFromPromotion(Promotion $promotion,int $categoryId){
+        $this->promotionService->removeCategoryFromPromotion($categoryId,$promotion);
+        return $this->redirectToRoute('promotion_show',[
+            'id' => $promotion->getId()
+        ]);
     }
 
     /**
@@ -165,7 +213,7 @@ class PromotionController extends Controller
      * @param $categoryId
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function choiceProducts(Promotion $promotion, $categoryId)
+    public function choiceProductsAction(Promotion $promotion, $categoryId)
     {
         $category = $this->categoryService->find($categoryId);
         $products = $this->categoryService->getAllProducts($categoryId);
@@ -176,4 +224,42 @@ class PromotionController extends Controller
         ]);
     }
 
+    /**
+     * @param Promotion $promotion
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @Route("promotion/choiceUsers/{id}",name="user_to_promotion")
+     */
+    public function choiceUsersAction(Promotion $promotion){
+        $users = $this->userService->findAll();
+        return $this->render('promotion/addUsers.html.twig',[
+            'users' => $users,
+            'promotion' => $promotion
+        ]);
+    }
+
+    /**
+     * @param Promotion $promotion
+     * @param int $userId
+     * @Route("promotion/addUser/{id}/{userId}",name="add_user_to_promo")
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function addUserToPromotions(Promotion $promotion,int $userId){
+        $this->promotionService->addUserToPromo($promotion,$userId);
+        return $this->redirectToRoute('user_to_promotion',[
+            'id' => $promotion->getId()
+        ]);
+    }
+
+    /**
+     * @param Promotion $promotion
+     * @param int $userId
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @Route("promotion/removeUser/{id}/{userId}",name="remove_user_from_promo")
+     */
+    public function removeUserFromPromotions(Promotion $promotion,int $userId){
+        $this->promotionService->removeUserFromPromo($promotion,$userId);
+        return $this->redirectToRoute('user_to_promotion',[
+            'id' => $promotion->getId()
+        ]);
+    }
 }

@@ -31,15 +31,15 @@ class Shipper
 
     /**
      * @var Product
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product",inversedBy="cartProducts")
-     * @ORM\JoinColumn(name="product_id",referencedColumnName="id",nullable=false)
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Product",inversedBy="cartProducts",cascade={"persist"})
+     * @ORM\JoinColumn(name="product_id",referencedColumnName="id",nullable=false,onDelete="CASCADE")
      */
     private $product;
 
     /**
      * @var Cart
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Cart",inversedBy="shipper")
-     * @ORM\JoinColumn(name="cart_id",referencedColumnName="id",nullable=false)
+     * @ORM\JoinColumn(name="cart_id",referencedColumnName="id",nullable=false,onDelete="CASCADE")
      */
     private $cart;
 
