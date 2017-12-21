@@ -119,7 +119,10 @@ class PromotionService implements PromotionServiceInterface
         $category = $this->categoryRepository->find($categoryId);
         $promotion->addCategory($category);
         foreach ($products as $product){
-            $promotion->addProduct($product);
+            if (!$promotion->getProducts()->contains($product))
+            {
+                $promotion->addProduct($product);
+            }
         }
         $this->entityManager->merge($promotion);
         $this->entityManager->flush();
