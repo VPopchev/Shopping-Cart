@@ -10,9 +10,7 @@ namespace AppBundle\Service;
 
 
 use AppBundle\Entity\Category;
-use AppBundle\Entity\Promotion;
 use AppBundle\Repository\CategoryRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 
 class CategoryService implements CategoryServiceInterface

@@ -31,6 +31,7 @@ class ProductController extends Controller
     /**
      * ProductController constructor.
      * @param ProductServiceInterface $productService
+     * @param ShipperServiceInterface $shipperService
      */
     public function __construct(ProductServiceInterface $productService,
                                 ShipperServiceInterface $shipperService)

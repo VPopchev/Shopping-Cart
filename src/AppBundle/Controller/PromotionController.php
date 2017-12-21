@@ -266,6 +266,7 @@ class PromotionController extends Controller
     /**
      * @param Promotion $promotion
      * @Route("promotion/delete/{id}",name="delete_promotion")
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function deletePromotionAction(Promotion $promotion){
         $this->promotionService->removePromotion($promotion);
