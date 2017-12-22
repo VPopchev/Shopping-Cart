@@ -62,7 +62,7 @@ class User implements UserInterface
      *     min="3",
      *     minMessage="Your first name should be at least {{ limit }} characters long!"
      * )
-     * @ORM\Column(name="firstName", type="string", length=255,unique=true)
+     * @ORM\Column(name="first_name", type="string", length=255,unique=true)
      */
     private $firstName;
 
@@ -72,7 +72,7 @@ class User implements UserInterface
      *     min="3",
      *     minMessage="Your last name should be at least {{ limit }} characters long!"
      * )
-     * @ORM\Column(name="lastName", type="string", length=255)
+     * @ORM\Column(name="last_name", type="string", length=255)
      */
     private $lastName;
 
@@ -368,6 +368,7 @@ class User implements UserInterface
     }
 
     /**
+     * @param $role
      * @return User
      */
     public function addRole($role){

@@ -9,9 +9,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Cart;
-use AppBundle\Entity\Promotion;
 use AppBundle\Entity\User;
-use AppBundle\Repository\PromotionRepository;
 use AppBundle\Repository\RoleRepository;
 use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManager;
@@ -38,6 +36,8 @@ class UserService implements UserServiceInterface
     /**
      * UserService constructor.
      * @param EntityManager $entityManager
+     * @param UserRepository $userRepository
+     * @param RoleRepository $roleRepository
      */
     public function __construct(EntityManager $entityManager,
                                 UserRepository $userRepository,

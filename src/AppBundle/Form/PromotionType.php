@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -18,11 +19,11 @@ class PromotionType extends AbstractType
             'attr' => ['class' => 'form-control'],
             'label_attr' => ['class' => 'col-sm-4 control-label']
         ])
-            ->add('startDate',DateType::class,[
+            ->add('startDate',DateTimeType::class,[
                 'label_attr' => ['class' => 'col-sm-4 control-label'],
                 'attr' => ['class' => 'form-control'],
             ])
-            ->add('endDate',DateType::class,[
+            ->add('endDate', DateTimeType::class,[
                 'label_attr' => ['class' => 'col-sm-4 control-label'],
                 'attr' => ['class' => 'form-control'],
             ])
@@ -38,6 +39,7 @@ class PromotionType extends AbstractType
             ])
             ->add('discount',NumberType::class,[
                 'attr' => ['class' => 'form-control'],
+                'label' => 'Discount %',
                 'label_attr' => ['class' => 'col-sm-4 control-label']
             ]);
     }

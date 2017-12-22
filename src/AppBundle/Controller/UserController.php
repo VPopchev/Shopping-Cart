@@ -9,10 +9,11 @@ use AppBundle\Service\Paginator;
 use AppBundle\Service\ProductServiceInterface;
 use AppBundle\Service\PromotionServiceInterface;
 use AppBundle\Service\UserServiceInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends Controller
 {
@@ -91,6 +92,7 @@ class UserController extends Controller
     /**
      * @Route("user/userProfileView/{id}/{page}",name="view_user_profile")
      * @param User $user
+     * @param int $page
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function viewUserProfile(User $user, int $page = 1)
@@ -103,6 +105,19 @@ class UserController extends Controller
         return $this->render('user/userProfileView.html.twig', [
             'user' => $user,
             'paginator' => $paginator
+        ]);
+    }
+
+
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @Route("user/list",name="users_list")
+     * @Security("has_role('ROLE_ADMIN')")
+     */
+    public function listAction(){
+        $users = $this->userService->findAll();
+        return $this->render('user/listAll.html.twig',[
+            'users' => $users
         ]);
     }
 }

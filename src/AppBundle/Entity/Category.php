@@ -34,7 +34,7 @@ class Category
      *     minMessage="Category name must be at least {{ limit }} characters long!",
      *     maxMessage="Category name cannot be more than {{ limit }} characters long!"
      * )
-     * @ORM\Column(name="name", type="string", length=255, unique=true)
+     * @ORM\Column(name="name", type="string", length=255)
      */
     private $name;
 

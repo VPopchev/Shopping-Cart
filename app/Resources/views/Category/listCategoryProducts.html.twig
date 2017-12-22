@@ -1,5 +1,13 @@
 {% extends 'base.html.twig' %}
+{% macro recursiveCategory(category) %}
+        {% if category.parent %}
+            {{ _self.recursiveCategory(category.parent) }}
+        {% endif %}
+    &#x25BA;<a class="btn btn-default" href="{{ path('category_products_list', {'id': category.id, 'page': 1}) }}">{{ category.getName }}</a>
+{% endmacro %}
 {% block main %}
+    <a href="{{ path('homepage') }}" class="btn btn-default">Home</a>
+     {{ _self.recursiveCategory(category) }}
     <h1>{{ category.parent ? category.parent.name ~ '/': '' }}{{ category.name }} Products</h1>
     {% for child in category.children %}
         <a class="btn btn-default" href="{{ path('category_products_list',{'id': child.id}) }}">{{ child.getName }}</a>
@@ -17,7 +25,6 @@
                             <img src="{{ asset('app/images/' ~ product.image) }}" class="product-image"/>
                             <h4>Category:{{ product.category.parent ? product.category.parent.name ~ '/': '' }}{{ product.category.name }}</h4>
                         </header>
-
                         <p style="border: solid;border-radius: 3px">
                             Description: {{ product.description }}
                         </p>
@@ -32,9 +39,9 @@
                             {% endif %}
                         </footer>
                         <small class="author">
+                            Quantity: {{ product.quantity }} <br/>
                             Owner: {{ product.owner.username }}
                         </small>
-
                         <footer>
                             <div class="pull-right">
                                 <a class="btn btn-default btn-xs"

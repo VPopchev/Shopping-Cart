@@ -40,33 +40,7 @@ class CartController extends Controller
     }
 
 
-    /**
-     * @Route("product/add/{id}",name="add_to_cart")
-     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
-     * @param Product $product
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    public function addAction(Product $product,Request $request)
-    {
-        /** @var Cart $userCart */
-        $userCart = $this->getUser()->getCart();
 
-        $quantity = $request->request->get('quantity');
-
-        $em = $this->getDoctrine()->getManager();
-        $shipper = new Shipper();
-        $shipper->setQuantity($quantity);
-        $shipper->setCart($userCart);
-        $shipper->setProduct($product);
-
-        $em->persist($shipper);
-        $em->flush();
-        $this->addFlash('success', "{$product->getName()} added to cart successfully!");
-        return $this->redirectToRoute('view_product', [
-            'id' => $product->getId()
-        ]);
-    }
 
     /**
      * @Route("product/remove/{id}",name="remove_from_cart")
@@ -79,7 +53,7 @@ class CartController extends Controller
         /** User $user */
         $user = $this->getUser();
         /** @var Cart $userCart */
-        $userCart = $this->getUser()->getCart();
+        $userCart = $user->getCart();
         $userShipper = $this->getDoctrine()->getRepository(Shipper::class)
             ->findOneBy(['product' => $product,'cart' => $userCart]);
         $em = $this->getDoctrine()->getManager();
@@ -92,7 +66,7 @@ class CartController extends Controller
     /**
      * @Route("product/clearCart",name="clear_cart")
      */
-    public function clearCart()
+    public function clearCartAction()
     {
         $user = $this->getUser();
         $this->cartService->clearCart($user);

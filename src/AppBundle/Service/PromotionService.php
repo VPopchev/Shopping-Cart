@@ -171,4 +171,10 @@ class PromotionService implements PromotionServiceInterface
         $this->entityManager->merge($promotion);
         $this->entityManager->flush();
     }
+
+    public function removePromotion(Promotion $promotion)
+    {
+        $this->entityManager->remove($promotion);
+        $this->entityManager->flush();
+    }
 }

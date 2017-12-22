@@ -262,4 +262,14 @@ class PromotionController extends Controller
             'id' => $promotion->getId()
         ]);
     }
+
+    /**
+     * @param Promotion $promotion
+     * @Route("promotion/delete/{id}",name="delete_promotion")
+     */
+    public function deletePromotionAction(Promotion $promotion){
+        $this->promotionService->removePromotion($promotion);
+        $this->addFlash('success','Promotion Deleted Successful');
+        return $this->redirectToRoute('promotion_list');
+    }
 }

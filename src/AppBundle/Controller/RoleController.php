@@ -44,7 +44,8 @@ class RoleController extends Controller
         $roleName = $request->request->get('role');
 
         if (null === $roleName){
-            return $this->removeRoles($user,$em);
+            $this->removeRoles($user,$em);
+            return $this->redirectToRoute('view_user_profile',['id' => $user->getId()]);
         }
 
         if(!in_array($roleName,$user->getRoles())){

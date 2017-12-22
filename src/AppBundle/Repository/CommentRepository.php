@@ -1,6 +1,9 @@
 <?php
 
 namespace AppBundle\Repository;
+use AppBundle\Entity\Comment;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
  * CommentRepository
@@ -10,4 +13,8 @@ namespace AppBundle\Repository;
  */
 class CommentRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function __construct(EntityManager $em)
+    {
+        parent::__construct($em, new ClassMetadata(Comment::class));
+    }
 }

@@ -11,14 +11,14 @@ namespace AppBundle\Repository;
 
 use AppBundle\Entity\Product;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 class ProductRepository extends \Doctrine\ORM\EntityRepository
 {
 
     public function __construct(EntityManager $em)
     {
-        parent::__construct($em, new Mapping\ClassMetadata(Product::class));
+        parent::__construct($em, new ClassMetadata(Product::class));
     }
 
 
@@ -98,10 +98,12 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
     }
 
     public function getUserProductsCount(int $userId){
-        $em = $this->getEntityManager();
-        $query = $em->createQuery("SELECT COUNT(a) c FROM AppBundle:Product a 
-                                        WHERE a.isActive = 1
-                                        AND a.owner = $userId");
-        return $query->getOneOrNullResult()['c'];
+
+        $db = $this->getEntityManager()->getConnection();
+        $result = $db->fetchColumn("SELECT COUNT(p.id)
+                                             FROM products as p
+                                             WHERE p.status = 1
+                                             AND p.user_id = $userId");
+        return $result;
     }
 }

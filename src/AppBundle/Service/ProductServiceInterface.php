@@ -24,5 +24,5 @@ interface ProductServiceInterface
 
     public function getUserProductsCount(int $userId);
 
-    public function addComment(Product $product,string $content,$user);
+
 }

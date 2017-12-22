@@ -34,4 +34,6 @@ interface PromotionServiceInterface
     public function addProductToPromotion(Promotion $promotion,Product $product);
 
     public function removeProductFromPromotion(Promotion $promotion,Product $product);
+
+    public function removePromotion(Promotion $promotion);
 }

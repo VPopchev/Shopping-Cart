@@ -2,9 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Product;
 use AppBundle\Entity\Category;
-use AppBundle\Entity\User;
 use AppBundle\Form\CategoryType;
 use AppBundle\Service\CategoryServiceInterface;
 use AppBundle\Service\Paginator;
@@ -36,7 +34,7 @@ class CategoryController extends Controller
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function manageCategory(Request $request)
+    public function manageCategoryAction(Request $request)
     {
         $category = new Category();
         $form = $this->createForm(CategoryType::class, $category);
@@ -86,7 +84,7 @@ class CategoryController extends Controller
      * @param Category $category
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function deleteCategory(Category $category)
+    public function deleteCategoryAction(Category $category)
     {
         $this->categoryService->delete($category);
         $this->addFlash('success', "Category deleted successful!");

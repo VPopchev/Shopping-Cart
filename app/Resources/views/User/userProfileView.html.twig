@@ -1,5 +1,15 @@
 {% extends 'base.html.twig' %}
 {% block body %}
+    {% for msg in app.session.flashBag.get('error') %}
+        <div class="alert alert-danger">
+            <h3>{{ msg }}</h3>
+        </div>
+    {% endfor %}
+    {% for msg in app.session.flashBag.get('success') %}
+        <div class="alert alert-success">
+            <h3>{{ msg }}</h3>
+        </div>
+    {% endfor %}
     <div class="container body-content">
         <article>
             <header>

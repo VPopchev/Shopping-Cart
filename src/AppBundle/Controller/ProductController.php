@@ -2,11 +2,13 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Comment;
 use AppBundle\Entity\Product;
+use AppBundle\Entity\Shipper;
 use AppBundle\Entity\User;
 use AppBundle\Form\ProductType;
+use AppBundle\Form\ShipperType;
 use AppBundle\Service\ProductServiceInterface;
+use AppBundle\Service\ShipperServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\File\File;
@@ -22,12 +24,19 @@ class ProductController extends Controller
     private $productService;
 
     /**
+     * @var ShipperServiceInterface
+     */
+    private $shipperService;
+
+    /**
      * ProductController constructor.
      * @param ProductServiceInterface $productService
      */
-    public function __construct(ProductServiceInterface $productService)
+    public function __construct(ProductServiceInterface $productService,
+                                ShipperServiceInterface $shipperService)
     {
         $this->productService = $productService;
+        $this->shipperService = $shipperService;
     }
 
 
@@ -56,9 +65,10 @@ class ProductController extends Controller
     /**
      * @Route("product/view/{id}",name="view_product")
      * @param Product $product
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function viewAction(Product $product)
+    public function viewAction(Product $product,Request $request)
     {
         /** @var User $currentUser */
         $currentUser = $this->getUser();
@@ -70,26 +80,24 @@ class ProductController extends Controller
         ) {
             return $this->redirectToRoute('homepage');
         }
-        $form = $this->createForm(ProductType::class,$product);
+        $shipper = new Shipper();
+        $form = $this->createForm(ShipperType::class,$shipper);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+                $userCart = $currentUser->getCart();
+                $this->shipperService->createShipper($shipper,$userCart,$product);
+                $this->addFlash('success', "{$product->getName()} added to cart successfully!");
+                return $this->redirectToRoute('view_product',[
+                    'id' => $product->getId(),
+                ]);
+        }
         return $this->render('product/view.html.twig', [
             'product' => $product,
             'form' => $form->createView()
         ]);
     }
 
-    /**
-     * @param Product $product
-     * @param Request $request
-     * @Route("product/comment/{id}",name="comment_product")
-     */
-    public function commentAction(Product $product, Request $request){
-        $content = $request->request->get('content');
-        $author = $this->getUser();
-        $this->productService->addComment($product,$content,$author);
-        return $this->redirectToRoute('view_product',[
-            'id' => $product->getId()
-        ]);
-    }
+
 
 
     /**

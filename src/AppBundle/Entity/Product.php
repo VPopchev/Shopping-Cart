@@ -31,7 +31,9 @@ class Product
      * )
      * @Assert\Length(
      *     min="3",
-     *     minMessage="Product name must be a least {{ limit }} characters long!"
+     *     max="20",
+     *     minMessage="Product name must be a least {{ limit }} characters long!",
+     *     maxMessage="Name should be max {{ limit }} characters long!"
      * )
      * @ORM\Column(name="name", type="string", length=255)
      */
@@ -41,9 +43,7 @@ class Product
      * @var string
      * @Assert\Length(
      *     min="3",
-     *     max="20",
-     *     minMessage="Name should be at least {{ limit }} characters long!",
-     *     maxMessage="Name should be max {{ limit }} characters long!"
+     *     minMessage="Description should be at least {{ limit }} characters long!"
      * )
      * @ORM\Column(name="description", type="text")
      */
@@ -75,7 +75,7 @@ class Product
     /**
      * @var Category
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Category"), inversedBy="products")
-     * @ORM\JoinColumn(name="categoryId",referencedColumnName="id",onDelete="SET NULL",nullable=true)
+     * @ORM\JoinColumn(name="category_id",referencedColumnName="id",onDelete="SET NULL",nullable=true)
      */
     private $category;
 
@@ -83,7 +83,7 @@ class Product
     /**
      * @var User
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="products")
-     * @ORM\JoinColumn(name="userId",referencedColumnName="id",onDelete="CASCADE")
+     * @ORM\JoinColumn(name="user_id",referencedColumnName="id",onDelete="CASCADE")
      */
     private $owner;
 
@@ -381,14 +381,14 @@ class Product
         $promotions = $this->getPromotions();
 
         if (null !== $user) {
-            $promotions = $promotions->filter(function (Promotion $p) use ($user) {
-                return ($p->getUsers()->contains($user));
-            }
-            );
-            $promotions = $promotions->filter(function (Promotion $p) {
-                $currDate = new \DateTime('NOW');
-                return ($currDate >= $p->getStartDate() and $currDate <= $p->getEndDate() ? 1 : 0);
+            $promotions = $promotions->filter(function (Promotion $p) use ($user)
+            { return ($p->getUsers()->contains($user)); } );
+
+            $promotions = $promotions->filter(function (Promotion $p)
+            { $currDate = new \DateTime('NOW');
+              return ($currDate >= $p->getStartDate() and $currDate <= $p->getEndDate() ? 1 : 0);
             });
+
         } else {
             $promotions = $promotions->filter(function (Promotion $p) {
                 $currDate = new \DateTime('NOW');

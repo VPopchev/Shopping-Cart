@@ -54,10 +54,8 @@
                             </div>
                         {% endif %}
                         {% if (app.user != null and product.owner.id != app.user.id) %} <br/>
-                        <form action="{{ path('add_to_cart', {'id': product.id}) }}" method="post">
-                            Quantity <input class="form-control" type="number" name="quantity" min="0" max="{{ product.quantity}}" />
-                            <button type="submit">Add To Cart</button>
-                        </form>
+                            {{ form_start(form) }}
+                            {{ form_end(form) }}
                         {% endif %}
                     </footer>
                 </article>
@@ -66,6 +64,9 @@
                 <h3>Comments</h3>
                 {% for comment in product.comments %}
                     <div class="row comment">
+                        {% if app.user and app.user.isEditor %}
+                            <a class="pull-right" href="{{ path('delete_comment', {'id': comment.id}) }}">X</a>
+                        {% endif %}
                         <p>{{ comment.content }}</p>
                         Author: {{ comment.author.username }}
                     </div>
@@ -76,7 +77,7 @@
                     <h3>Add Comment</h3>
                 <form action="{{ path('comment_product', {'id': product.id}) }}" method="post">
                     <textarea name="content"></textarea> <br/>
-                    <button type="submit">Comment</button>
+                    <button type="submit" class="btn btn-default">Comment</button>
                 </form>
                 </div>
             {% endif %}

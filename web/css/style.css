@@ -7089,6 +7089,7 @@ article .author  {
   border-radius: 3px;
   margin: 1px;
   color: white;
+  padding: 3px;
 }
 
 .comment-form {

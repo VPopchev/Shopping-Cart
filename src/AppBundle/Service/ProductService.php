@@ -55,6 +55,12 @@ class ProductService implements ProductServiceInterface
     {
         $this->setImage($product,$baseImage);
         $this->entityManager->flush();
+        /** @var Promotion $promotion */
+        $promotion = $product->getTopPromotion();
+        if(null != $promotion){
+            $promotion->removeProduct($product);
+            $this->entityManager->flush();
+        }
         $this->addToCategoryPromotions($product);
     }
 
@@ -100,11 +106,7 @@ class ProductService implements ProductServiceInterface
 
     private function addToCategoryPromotions(Product $product)
     {
-        /** @var Promotion $promotion */
-        $promotion = $product->getTopPromotion();
-        if(null != $promotion){
-            $promotion->removeProduct($product);
-        }
+
         $category = $product->getCategory();
         /** @var Category $parent */
         $parent = $category->getParent();
@@ -135,13 +137,14 @@ class ProductService implements ProductServiceInterface
         return $this->productRepository->getUserProductsCount($userId);
     }
 
-    public function addComment(Product $product, string $content, $user)
-    {
-        $comment = new Comment();
-        $comment->setAuthor($user);
-        $comment->setProduct($product);
-        $comment->setContent($content);
-        $this->entityManager->persist($comment);
-        $this->entityManager->flush();
-    }
+//    private function recursion(Category $category,&$products){
+//        foreach ($category->getActiveProducts() as $activeProd){
+//            array_push($products,$activeProd);
+//        }
+//        if ($category->getChildren()){
+//            foreach($category->getChildren() as $child){
+//                $this->recursion($child,$products);
+//            }
+//        }
+//    }
 }
