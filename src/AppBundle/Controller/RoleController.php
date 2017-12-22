@@ -14,34 +14,34 @@ use Symfony\Component\Routing\Annotation\Route;
 class RoleController extends Controller
 {
     /**
-     * @Route("user/roleChange/{id}",name="edit_roles")
-     * @Method("GET")
-     * @Security("has_role('ROLE_ADMIN')")
-     * @param User $user
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function editRoles(User $user){
-        $form = $this->createForm(UserType::class,$user);
-        return $this->render('user/roleChange.html.twig',[
-            'form' => $form->createView(),
-            'user' => $user
-        ]);
-    }
+         * @Route("user/roleChange/{id}",name="edit_roles")
+         * @Method("GET")
+         * @Security("has_role('ROLE_ADMIN')")
+         * @param User $user
+         * @return \Symfony\Component\HttpFoundation\Response
+         */
+        public function editRoles(User $user){
+            $form = $this->createForm(UserType::class,$user);
+            return $this->render('user/roleChange.html.twig',[
+                'form' => $form->createView(),
+                'user' => $user
+            ]);
+        }
 
-    /**
-     * @Route("user/roleChange/{id}",name="edit_roles_action")
-     * @Method("POST")
-     * @Security("has_role('ROLE_ADMIN')")
-     * @param User $user
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    public function editRolesAction(User $user,Request $request){
-        $form = $this->createForm(UserType::class,$user);
-        $form->handleRequest($request);
+        /**
+         * @Route("user/roleChange/{id}",name="edit_roles_action")
+         * @Method("POST")
+         * @Security("has_role('ROLE_ADMIN')")
+         * @param User $user
+         * @param Request $request
+         * @return \Symfony\Component\HttpFoundation\RedirectResponse
+         */
+        public function editRolesAction(User $user,Request $request){
+            $form = $this->createForm(UserType::class,$user);
+            $form->handleRequest($request);
 
-        $em = $this->getDoctrine()->getManager();
-        $roleName = $request->request->get('role');
+            $em = $this->getDoctrine()->getManager();
+            $roleName = $request->request->get('role');
 
         if (null === $roleName){
             $this->removeRoles($user,$em);

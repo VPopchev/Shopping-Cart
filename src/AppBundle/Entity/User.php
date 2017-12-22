@@ -62,7 +62,7 @@ class User implements UserInterface
      *     min="3",
      *     minMessage="Your first name should be at least {{ limit }} characters long!"
      * )
-     * @ORM\Column(name="first_name", type="string", length=255,unique=true)
+     * @ORM\Column(name="first_name", type="string", length=255)
      */
     private $firstName;
 

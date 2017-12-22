@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Promotion
@@ -52,7 +53,10 @@ class Promotion
 
     /**
      * @var int
-     *
+     * @Assert\Range(
+     *     min="1",
+     *     max="100",
+     * )
      * @ORM\Column(name="discount", type="integer")
      */
     private $discount;
